@@ -1,0 +1,7 @@
+name=Auto Logging 42.13+
+id=JBAutoLoggingNew
+description=New Auto Logging
+poster=poster.png
+require=\JB_ASSUtils
+versionMin=42.13
+author=jimbeamdiablo
