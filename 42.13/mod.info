@@ -1,0 +1,9 @@
+name=Auto Logging B42.13
+id=JBLoggingGPE
+description=Automatically chop trees, gather logs and more
+require=\JB_ASSUtils
+modversion=2.7
+icon=icon.png
+poster=poster.png
+author=jimbeamdiablo
+versionMin=42.13
