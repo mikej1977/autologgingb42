@@ -1,8 +1,6 @@
 -- jb_item_list.lua
--- item list for gathering
 JBLogging = JBLogging or {}
 
--- Centralized item lists for various gathering actions
 JBLogging.GatherItemList = {
     Logs = {
         "Base.Log", 
@@ -19,4 +17,13 @@ JBLogging.GatherItemList = {
         "Base.Twigs", 
         "Base.Splinters"
     }
+}
+
+JBLogging.ProcessList = {
+    SawLogs = {
+        ["Base.Log"] = true,
+        ["JB_Big_Wood.LargeLog"] = true,
+        ["JB_Big_Wood.VeryLargeLog"] = true
+    },
+    ResultItem = "Plank"
 }

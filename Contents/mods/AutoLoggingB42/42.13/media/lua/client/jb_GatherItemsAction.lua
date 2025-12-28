@@ -1,4 +1,4 @@
-local ActionSpeedKeeper = require("JB_SpeedKeeper")
+local ActionSpeedKeeper = require("jb_SpeedKeeper")
 
 -- old, it works, it's not optimized! booya!
 -- get backpacks on picked square
@@ -41,40 +41,32 @@ local function getPlayerContainers(playerObj)
 end
 
 local function getContainersOnSquare(square, playerObj)
-
     if not square or not playerObj then return nil end
 
     local objs = square:getObjects()
     local containers = {}
     local hasContainer = false
+
     local vehicle = square:getVehicleContainer()
-    local boot
     if vehicle then
-        boot = vehicle:getPartById("TrunkDoorOpened") or vehicle:getPartById("TruckBed") or vehicle:getPartById("TruckBedOpen")
+        local boot = vehicle:getPartById("TrunkDoorOpened") or
+            vehicle:getPartById("TruckBed") or
+            vehicle:getPartById("TruckBedOpen")
+        if boot and boot:getItemContainer() then
+            table.insert(containers, boot)
+            hasContainer = true
+        end
     end
 
     for i = 0, objs:size() - 1 do
         local obj = objs:get(i)
         if obj:getContainer() then
             table.insert(containers, obj)
-            print(obj:getFullType())
             hasContainer = true
         end
     end
 
-    if boot then
-        table.insert(containers, boot)
-        hasContainer = true
-    end
-
-    if hasContainer then
-        return containers
-    else
-        return nil
-    end
-    
-    return nil -- we fucked up, son
-
+    return hasContainer and containers or nil
 end
 
 ---@param character IsoPlayer -- you!

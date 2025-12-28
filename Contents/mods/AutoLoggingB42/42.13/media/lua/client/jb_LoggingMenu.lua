@@ -1,5 +1,5 @@
 JBLogging = JBLogging or {}
-require("JB_ModOptions")
+require("jb_ModOptions")
 local JB_ASSUtils = require("JB_ASSUtils")
 
 local old_ISChopTreeAction_new = ISChopTreeAction.new
@@ -113,7 +113,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
 
                             for m = 0, outputItem:getResultItems():size() - 1 do
                                 if outputItem:getResultItems():get(m):getName() == "Plank" then
-                                    print("Planks are delicious!")
+                                    --print("Planks are delicious!")
                                     return recipe
                                 end
                             end
@@ -176,18 +176,54 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     end
 
     local menuOptions = {
-        { condition = clickedFlags.tree, translate = "UI_JBLogging_Menu_Identify", action = JBLogging.doTreeInfo },
-        { condition = clickedFlags.logs, translate = "UI_JBLogging_Menu_Gather_Logs", action = JBLogging.doGatherLogs },
-        { condition = clickedFlags.plank, translate = "UI_JBLogging_Menu_Gather_Planks", action = JBLogging.doGatherPlanks },
-        { condition = clickedFlags.twig, translate = "UI_JBLogging_Menu_Gather_Branches", action = JBLogging.doGatherTwigsAndBranches },
-        { condition = axe and clickedFlags.tree, translate = "UI_JBLogging_Menu_Clear_Trees", action = JBLogging.doClearTrees },
-        { condition = hasCuttingTool and clickedFlags.bush, translate = "UI_JBLogging_Menu_Clear_Bushes", action = JBLogging.doClearBushes },
-        { condition = clickedFlags.grass, translate = "UI_JBLogging_Menu_Clear_Grass", action = JBLogging.doClearGrass },
-        --{ condition = hasCuttingTool and clickedFlags.grass, translate = "UI_JBLogging_Menu_Clear_Grass_Hand", action = JBLogging.doClearGrass },
-        { condition = clickedFlags.canSawPlanks and clickedFlags.logs, translate = "UI_JBLogging_Menu_Saw_Planks", action = JBLogging.doSawPlanks, params = { clickedFlags.sawRecipe } },
-        --{ condition = clickedFlags.stump, translate = "ContextMenu_JBBW_Remove_Stump", action = JBLogging.digStumps },
-    }
 
+        -- GATHERING ENGINE CALLS
+        {
+            condition = clickedFlags.logs,
+            translate = "UI_JBLogging_Menu_Gather_Logs",
+            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherLogs) end
+        },
+
+        {
+            condition = clickedFlags.plank,
+            translate = "UI_JBLogging_Menu_Gather_Planks",
+            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherPlanks) end
+        },
+
+        {
+            condition = clickedFlags.twig,
+            translate = "UI_JBLogging_Menu_Gather_Branches",
+            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherTwigsAndBranches) end
+        },
+
+        -- CLEARING ENGINE CALLS
+        {
+            condition = axe and clickedFlags.tree,
+            translate = "UI_JBLogging_Menu_Clear_Trees",
+            action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Tree") end
+        },
+
+        {
+            condition = hasCuttingTool and clickedFlags.bush,
+            translate = "UI_JBLogging_Menu_Clear_Bushes",
+            action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Bush") end
+        },
+
+        {
+            condition = clickedFlags.grass,
+            translate = "UI_JBLogging_Menu_Clear_Grass",
+            action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Grass") end
+        },
+
+        {
+            condition = clickedFlags.canSawPlanks and clickedFlags.logs,
+            translate = "UI_JBLogging_Menu_Saw_Planks",
+            action = function(worldObjs, p)
+                -- Pass the already discovered recipe as the 4th argument
+                JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedProcess, clickedFlags.sawRecipe)
+            end
+        },
+    }
     local showMenu = false
 
     for i = 1, #menuOptions do
