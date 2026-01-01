@@ -1,0 +1,6 @@
+name=Auto Logging 42.13+ LOCAL
+id=JBAutoLoggingNewLOCAL
+description=New Auto Logging LOCAL
+poster=poster.png
+require=\JB_ASSUtils
+author=jimbeamdiablo
