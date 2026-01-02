@@ -1,23 +1,5 @@
 local JBLogging = {}
 
-local function ohShitZambOnFireRUN(zamb)
-  if zamb:isOnFire() and zamb:isAlive() then
-    getSandboxOptions():set("ZombieLore.Speed", 1)
-    zamb:makeInactive(true)
-    zamb:makeInactive(false)
-    --zamb:setTarget(nil)
-    local px, py = getPlayer():getSquare():getX(), getPlayer():getSquare():getX()
-    zamb:pathToLocationF(px - 2, py + 2, zamb:getZ())
-    getSandboxOptions():set("ZombieLore.Speed", ohShitZambOnFireRUN_origSpeed)
-  end
-end
-
-Events.OnGameStart.Add(function()
-ohShitZambOnFireRUN_origSpeed = SandboxVars.ZombieLore.Speed
-end)
-
-Events.OnZombieUpdate.Add(ohShitZambOnFireRUN)
-
 
 local old_ISChopTreeAction_new = ISChopTreeAction.new
 function ISChopTreeAction:new(character, tree)
@@ -53,13 +35,6 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         subMenu:addOption(getText("UI_JBLogging_Menu_Clear_Trees"), worldObjects, JBLogging.doClearTrees, player)
     end
     context:addSubMenu(loggingMenu, subMenu)
-end
-
-
-JBLogging.doInvContextMenu = function(playerIndex, context, items)
-    -- this function purposely left blank for future use
-    -- items = ISInventoryPane.getActualItems(items)
-    return
 end
 
 
@@ -194,7 +169,6 @@ end
 
 
 Events.OnFillWorldObjectContextMenu.Add(JBLogging.doWorldContextMenu)
--- Events.OnFillInventoryObjectContextMenu.Add(JBLogging.doInvContextMenu)
 
 
 return JBLogging

@@ -272,6 +272,7 @@ JBSelectUtils.reset = function()
         JBSelectUtils.wMarkers:reset()
 end
 
+
 JBSelectUtils.update = function()
     local player = getPlayer()
     if not JBSelectUtils.testValid(player) then

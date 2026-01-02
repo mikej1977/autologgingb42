@@ -1,3 +1,5 @@
-name=Auto Logging B42
+name=Auto Logging B42 Pre MP
 id=JBLogging
 description=Automatically chop trees and gather logs
+poster=poster.png
+icon=icon.png
