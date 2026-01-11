@@ -1,0 +1,36 @@
+UI_EN = {
+    UI_JBLogging_Menu_Name = "Logging",
+    UI_JBLogging_Menu_Identify = "Identify Tree",
+    UI_JBLogging_Menu_Gather_Logs = "Gather Logs",
+    UI_JBLogging_Menu_Clear_Trees = "Clear Trees",
+
+    UI_JBLogging_Tree_Too_Far = "That's too far, I can't see",
+    UI_JBLogging_No_Tree = "I don't see a tree",
+    
+
+    UI_JBLogging_UseAorAn_A = "a",
+    UI_JBLogging_UseAorAn_An = "an",
+    UI_JBLogging_americanholly = "American Holly",
+    UI_JBLogging_americanlinden = "American Linden",
+    UI_JBLogging_canadianhemlock = "Candadian Hemlock",
+    UI_JBLogging_carolinasilverbell = "Carolina Silverbell",
+    UI_JBLogging_cockspurhawthorn = "Cockspur Hawthorn",
+    UI_JBLogging_dogwood = "Dogwood",
+    UI_JBLogging_easternredbud = "Eastern Redbud",
+    UI_JBLogging_redmaple = "Red Maple",
+    UI_JBLogging_riverbirch = "River Birch",
+    UI_JBLogging_virginiapine = "Virginia Pine",
+    UI_JBLogging_yellowwood = "Yellow Wood",
+
+    UI_JBLogging_Ident_1 = "That looks like %s %s",
+    UI_JBLogging_Ident_2 = "Kind of looks like %s %s",
+    UI_JBLogging_Ident_3 = "That's definitely %s %s",
+    UI_JBLogging_Ident_4 = "Duh, that's %s %s",
+    UI_JBLogging_Ident_5 = "Pretty sure that's %s %s",
+    UI_JBLogging_Ident_6 = "Looks like %s %s",
+    UI_JBLogging_Ident_7 = "I'd say that's %s %s",
+    UI_JBLogging_Ident_8 = "No doubt, that's %s %s",
+    UI_JBLogging_Ident_9 = "Clearly, that's %s %s",
+    UI_JBLogging_Ident_10 = "Without a doubt, that's %s %s",
+
+}

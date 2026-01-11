@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="Dig.xml">
+	<m_Name>JBBW_DigStumpPickAxe</m_Name>
+	<m_AnimName>Bob_Dig_PickAxe</m_AnimName>
+	<m_Conditions>
+		<m_Name>PerformingAction</m_Name>
+		<m_Type>STRING</m_Type>
+		<m_StringValue>JBBW_DigStumpPickAxe</m_StringValue>
+	</m_Conditions>
+    <m_Events>
+		<m_EventName>PlayHitSound</m_EventName>
+		<m_TimePc>0.55</m_TimePc>
+		<m_ParameterValue></m_ParameterValue>
+	</m_Events>
+    <m_Events>
+		<m_EventName>PlaySwingSound</m_EventName>
+		<m_TimePc>0.44</m_TimePc>
+		<m_ParameterValue></m_ParameterValue>
+	</m_Events>
+</animNode>

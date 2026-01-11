@@ -1,0 +1,5 @@
+IGUI_EN = {
+    IGUI_ContainerTitle_Logs_Storage = "Logs Storage",
+    IGUI_ContainerTitle_Planks_Storage = "Planks Storage",
+    IGUI_ContainerTitle_Twigs_Storage = "Twigs & Branches Storage",
+}

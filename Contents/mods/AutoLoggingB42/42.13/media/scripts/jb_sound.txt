@@ -1,0 +1,14 @@
+module Base
+{
+    sound JB_Saw
+    {
+        category = Sartre, loop = false, is3D = true,
+        clip { file = media/sound/JB_Saw.ogg, distanceMax = 10, volume = 3, }
+    }
+
+    sound ChopTreeRepeat
+    {
+        category = ChopTree, loop = true, is3D = true,
+        clip { file = media/sound/treechop.ogg, distanceMax = 8, volume = 4, }
+    }
+}
