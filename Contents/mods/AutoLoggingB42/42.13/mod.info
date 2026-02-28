@@ -6,3 +6,4 @@ icon=icon.png
 require=\JB_ASSUtils
 author=jimbeamdiablo
 pack=jb_autologging
+tiledef=jb_autologging 5555

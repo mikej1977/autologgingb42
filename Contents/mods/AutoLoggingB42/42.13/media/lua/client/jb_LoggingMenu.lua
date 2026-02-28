@@ -49,6 +49,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         canSawRecipe = false,
         tooDarkToSaw = false,
         plank = false,
+        firewood = false,
         twig = false,
         bush = false,
         grass = false,
@@ -163,15 +164,18 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
                 local item = o:getItem()
                 local fullType = item:getFullType()
 
-                if JBBW then
-                    local sprite = o:getSprite()
-                    local props = sprite and sprite:getProperties()
-                    local isStump = props:has("CustomName") and props:get("CustomName") or nil
-                    if isStump then
-                        if isStump == "Small Stump" or isStump == "Stump" then
-                            clickedFlags.stump = true
-                        end
+                
+                local sprite = o:getSprite()
+                local props = sprite and sprite:getProperties()
+                local isStump = props:has("CustomName") and props:get("CustomName") or nil
+                if isStump then
+                    if isStump == "Small Stump" or isStump == "Stump" then
+                        clickedFlags.stump = true
                     end
+                end                
+
+                if JBLogging.GatherItemList.Firewood[fullType] then
+                    clickedFlags.firewood = true
                 end
 
                 if JBLogging.GatherItemList.Logs[fullType] then
@@ -232,6 +236,12 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         },
 
         {
+            condition = clickedFlags.firewood,
+            translate = "UI_JBLogging_Menu_Gather_Firewood",
+            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherFirewood) end
+        },
+
+        {
             condition = clickedFlags.twig,
             translate = "UI_JBLogging_Menu_Gather_Branches",
             action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherTwigsAndBranches) end
@@ -278,16 +288,20 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     local storageOption = subMenu:addOption("Create Storage...", worldObjects, nil)
     local subMenuStorage = ISContextMenu:getNew(subMenu)
 
-    subMenuStorage:addOption("Log Storage (100cap)", worldObjects, function()
+    subMenuStorage:addOption("Logs Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Logs")
     end)
 
-    subMenuStorage:addOption("Plank Storage (100cap)", worldObjects, function()
+    subMenuStorage:addOption("Planks Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Planks")
     end)
 
-    subMenuStorage:addOption("Twig Storage (100cap)", worldObjects, function()
+    subMenuStorage:addOption("Scrap Wood Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Twigs")
+    end)
+
+    subMenuStorage:addOption("Firewood Storage (100 Cap)", worldObjects, function()
+        JBLogging.Storage.Create(playerObj, "Firewood")
     end)
 
     for i = 1, #menuOptions do

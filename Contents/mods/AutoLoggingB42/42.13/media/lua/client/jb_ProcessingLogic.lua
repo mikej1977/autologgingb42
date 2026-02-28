@@ -39,6 +39,7 @@ JBLogging.unifiedProcess = function(playerObj, worldObjects, selectedArea, recip
             if instanceof(obj, "IsoWorldInventoryObject") and JBLogging.ProcessList.SawLogs[obj:getItem():getFullType()] then
                 if luautils.walkAdj(playerObj, obj:getSquare(), true) then
                     ISTimedActionQueue.add(ISHandcraftAction:new(playerObj, recipe, containers, obj))
+                    --ISInventoryPaneContextMenu.OnNewCraft(obj:getItem(), recipe, playerObj:getPlayerNum(), true)
                 end
             end
         end

@@ -1,5 +1,7 @@
 -- jb_StorageLogic.lua
+
 require("jb_ItemList")
+require("jb_storageBuildCursor")
 JBLogging = JBLogging or {}
 JBLogging.Storage = {}
 
@@ -8,50 +10,103 @@ JBLogging.Storage.Types = {
         name = "Log Storage",
         itemType = JBLogging.GatherItemList.Logs,
         sprites = {
-            empty = nil,
-            level1 = "jb_autologging_1", -- 1 - 25%
-            level2 = "jb_autologging_1", -- 26 - 50%
-            level3 = "jb_autologging_0", -- 51 - 75%
-            level4 = "jb_autologging_0"  -- 76 - 100%
+            empty = "jb_autologging_20",
+            cursor = "jb_autologging_4",
+            cursorNorth = "jb_autologging_0",
+
+            level1 = "jb_autologging_4",
+            level2 = "jb_autologging_5",
+            level3 = "jb_autologging_6",
+            level4 = "jb_autologging_7",
+
+            level1north = "jb_autologging_0",
+            level2north = "jb_autologging_1",
+            level3north = "jb_autologging_2",
+            level4north = "jb_autologging_3"
         }
     },
+
     Planks = {
         name = "Plank Storage",
         itemType = JBLogging.GatherItemList.Planks,
         sprites = {
-            empty = nil,
-            level1 = "carpentry_02_84",
-            level2 = "carpentry_02_85",
-            level3 = "carpentry_02_86",
-            level4 = "carpentry_02_87"
+            empty = "jb_autologging_20",
+            cursor = "jb_autologging_12",
+            cursorNorth = "jb_autologging_8",
+
+            level1 = "jb_autologging_12",
+            level2 = "jb_autologging_13",
+            level3 = "jb_autologging_14",
+            level4 = "jb_autologging_15",
+
+            level1north = "jb_autologging_8",
+            level2north = "jb_autologging_9",
+            level3north = "jb_autologging_10",
+            level4north = "jb_autologging_11"
         }
     },
+
     Twigs = {
         name = "Twig Storage",
         itemType = JBLogging.GatherItemList.Twigs,
         sprites = {
-            empty = nil,
-            level1 = "vegetation_farming_01_13",
-            level2 = "vegetation_farming_01_13",
-            level3 = "vegetation_farming_01_13",
-            level4 = "vegetation_farming_01_13"
-        }
-    }
+            empty = "jb_autologging_20",
+            cursor = "jb_autologging_16",
+            cursorNorth = "jb_autologging_16",
+
+            level1 = "jb_autologging_16",
+            level2 = "jb_autologging_17",
+            level3 = "jb_autologging_18",
+            level4 = "jb_autologging_19",
+
+            level1north = "jb_autologging_16",
+            level2north = "jb_autologging_17",
+            level3north = "jb_autologging_18",
+            level4north = "jb_autologging_19",
+        },
+    },
+
+    Firewood = {
+        name = "Firewood Storage",
+        itemType = JBLogging.GatherItemList.Firewood,
+        sprites = {
+            empty = "jb_autologging_20",
+            cursor = "jb_autologging_28",
+            cursorNorth = "jb_autologging_24",
+
+            level1 = "jb_autologging_28",
+            level2 = "jb_autologging_29",
+            level3 = "jb_autologging_30",
+            level4 = "jb_autologging_31",
+
+            level1north = "jb_autologging_24",
+            level2north = "jb_autologging_25",
+            level3north = "jb_autologging_26",
+            level4north = "jb_autologging_27",
+        },
+
+    },
 }
 
-
 JBLogging.Storage.Create = function(playerObj, typeKey)
-    local worldObjs = nil
-    local JB_ASSUtils = require("JB_ASSUtils")
-    JB_ASSUtils.SelectSingleSquare(worldObjs, playerObj, JBLogging.Storage.PlaceStorage, typeKey)
+    local data = JBLogging.Storage.Types[typeKey]
+    if not data then return end
+
+    local sprite = data.sprites.cursor
+    local northSprite = data.sprites.cursorNorth or sprite
+
+    if JB_StorageBuildCursor then
+        local buildObj = JB_StorageBuildCursor:new(playerObj, typeKey, sprite, northSprite)
+        getCell():setDrag(buildObj, playerObj:getPlayerNum())
+    end
 end
 
-JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey)
+JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey, north, spriteName)
     if not square then return end
-    
+
     for i = 0, square:getObjects():size() - 1 do
-		local object = square:getObjects():get(i)
-		if object:getProperties() and object:getProperties():has(IsoFlagType.canBeRemoved) then
+        local object = square:getObjects():get(i)
+        if object:getProperties() and object:getProperties():has(IsoFlagType.canBeRemoved) then
             if isClient() then
                 sledgeDestroy(object)
             else
@@ -60,13 +115,12 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
             end
         end
     end
-    
-    local cell = square:getCell()
 
-    local spriteName = "blends_natural_01_64" -- dirt
-    local storageObj = IsoThumpable.new(cell, square, spriteName, false, {})
+    local cell = square:getCell()
+    local finalSprite = spriteName or "blends_natural_01_64" -- dirt
+
+    local storageObj = IsoThumpable.new(cell, square, finalSprite, north, {})
     storageObj:setIsThumpable(false)
-    --storageObj:setBlockAllTheSquare(false)
     storageObj:setCanPassThrough(true)
 
     local container = storageObj:getContainer()
@@ -79,22 +133,20 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
     container:setCapacity(100)
     container:setAcceptItemFunction("JBLogging.Storage.Accept")
 
-    -- need to check if square is against a wall and set direction?
     local modData = storageObj:getModData()
     modData.JB_AutoLogStorage = typeKey
-    
+
+    JBLogging.Storage.UpdateSprite(storageObj)
+
     square:AddSpecialObject(storageObj)
     storageObj:transmitModData()
-    --if isClient() then storageObj:transmitCompleteItemToClients() end
     storageObj:transmitCompleteItemToClients()
     square:RecalcAllWithNeighbours(true)
-    
+
     triggerEvent("OnContainerUpdate")
-    playerObj:Say("Created " .. JBLogging.Storage.Types[typeKey].name)
 end
 
 JBLogging.Storage.Accept = function(container, item)
-
     local object = container:getParent()
     if not object then return true end
 
@@ -108,19 +160,9 @@ JBLogging.Storage.Accept = function(container, item)
     local allowedTypes = storageConfig.itemType
 
     if type(allowedTypes) == "table" then
-        if allowedTypes[itemFullType] then
-            return true
-        end
-
-        for _, v in pairs(allowedTypes) do
-            if v == itemFullType then
-                return true
-            end
-        end
+        if allowedTypes[itemFullType] then return true end
     elseif type(allowedTypes) == "string" then
-        if allowedTypes == itemFullType then
-            return true
-        end
+        if allowedTypes == itemFullType then return true end
     end
 
     return false
@@ -129,44 +171,53 @@ end
 ---@param object IsoThumpable
 JBLogging.Storage.UpdateSprite = function(object)
     if not object or not object:getModData().JB_AutoLogStorage then return end
-    
+
     local typeKey = object:getModData().JB_AutoLogStorage
     local data = JBLogging.Storage.Types[typeKey]
     if not data then return end
-    
+
     local container = object:getContainer()
     if not container then return end
-    
+
     local weight = container:getContentsWeight()
-    local spriteName = data.sprites.empty or "blends_natural_01_64" -- dirt
-    
+    local isNorth = object:getNorth()
+
+    local spriteName = data.sprites.empty or "blends_natural_01_64"
+    local levelKey = nil
+
     if weight > 75 then
-        spriteName = data.sprites.level4
+        levelKey = "level4"
     elseif weight > 50 then
-        spriteName = data.sprites.level3
+        levelKey = "level3"
     elseif weight > 25 then
-        spriteName = data.sprites.level2
+        levelKey = "level2"
     elseif weight > 0 then
-        spriteName = data.sprites.level1
+        levelKey = "level1"
     end
-    
+
+    if levelKey then
+        if isNorth and data.sprites[levelKey .. "north"] then
+            spriteName = data.sprites[levelKey .. "north"]
+        else
+            spriteName = data.sprites[levelKey]
+        end
+    end
+
     if object:getSpriteName() ~= spriteName then
-        print(object:getSpriteName(), " ~= ", spriteName)
-        print("update - changing sprite")
         object:setSpriteFromName(spriteName)
         object:transmitUpdatedSpriteToClients()
         object:transmitCompleteItemToClients()
-        object:sendObjectChange('containers')
+        object:sendObjectChange('sprite')
+        --object:sendObjectChange(IsoObjectChange.SPRITE)
         object:transmitModData()
     end
 end
 
 JBLogging.Storage.CheckSquare = function(square)
     if not square then return end
-    for i=0, square:getSpecialObjects():size()-1 do
+    for i = 0, square:getSpecialObjects():size() - 1 do
         local obj = square:getSpecialObjects():get(i)
         if obj:getModData().JB_AutoLogStorage then
-            print("check square, updating sprite...")
             JBLogging.Storage.UpdateSprite(obj)
         end
     end
@@ -181,10 +232,8 @@ JBLogging.Storage.OnRefreshContainers = function(inventoryPage, state)
 
     for _, backpack in ipairs(containers) do
         local container = backpack.inventory
-
         if container and container:getParent() then
             local object = container:getParent()
-
             local modData = object:getModData()
             if modData and modData.JB_AutoLogStorage then
                 container:setAcceptItemFunction("JBLogging.Storage.Accept")
@@ -197,11 +246,45 @@ end
 Events.OnRefreshInventoryWindowContainers.Add(JBLogging.Storage.OnRefreshContainers)
 
 Events.OnContainerUpdate.Add(function(container)
-    if not container then return end
+    if not container or 
+        instanceof(container, "IsoDeadBody") or
+        instanceof(container, "IsoZombie") or
+        instanceof(container, "IsoGridSquare") then
+        return
+    end
+    if not container:getSquare() then return end
     local sq = container:getSquare()
     if not sq then return end
     JBLogging.Storage.CheckSquare(sq)
 end)
 
+Events.OnObjectAboutToBeRemoved.Add(function(obj)
+    if not obj then return end
+
+    local modData = obj:getModData()
+
+    if modData and modData.JB_AutoLogStorage then
+        local container = obj:getContainer()
+
+        if container and not container:isEmpty() then
+            local square = obj:getSquare()
+            if not square then return end
+
+            local items = container:getItems()
+
+            for i = items:size() - 1, 0, -1 do
+                local item = items:get(i)
+                local dropX, dropY, dropZ = ISTransferAction.GetDropItemOffset(
+                    getSpecificPlayer(0),
+                    square,
+                    item
+                )
+
+                square:AddWorldInventoryItem(item, dropX, dropY, dropZ)
+                container:Remove(item)
+            end
+        end
+    end
+end)
 
 return JBLogging

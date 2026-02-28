@@ -13,6 +13,7 @@ UI_EN = {
     UI_JBLogging_Menu_Gather_Branches = "Gather Twigs and Branches",
     UI_JBLogging_Menu_Saw_Planks = "Saw Logs Into Planks",
     UI_JBLogging_Menu_Gather_Planks = "Gather Planks",
+    UI_JBLogging_Menu_Gather_Firewood = "Gather Firewood",
 
     UI_JBLogging_Tree_Too_Far = "That's too far, I can't see",
     UI_JBLogging_No_Tree = "I don't see a tree",

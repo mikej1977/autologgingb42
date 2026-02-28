@@ -26,58 +26,113 @@ local function getPlayerContainers(playerObj)
     return #containerList > 0 and containerList or nil
 end
 
-local function getContainersOnSquare(square, playerObj)
-    if not square or not playerObj then return nil end
+function GatherItemsAction:getStorageType()
+    if not self.itemTypes then return nil end
 
-    local objs = square:getObjects()
-    local containers = {}
-    local hasContainer = false
-
-    local vehicle = square:getVehicleContainer()
-    if vehicle then
-        local boot = vehicle:getPartById("TrunkDoorOpened") or
-            vehicle:getPartById("TruckBed") or
-            vehicle:getPartById("TruckBedOpen") or
-            vehicle:getTrailerTrunkPart()
-        if boot and boot:getItemContainer() then
-            table.insert(containers, boot)
-            hasContainer = true
+    for typeKey, data in pairs(JBLogging.Storage.Types) do
+        for itemFullType, _ in pairs(self.itemTypes) do
+            if type(data.itemType) == "table" and data.itemType[itemFullType] then
+                return typeKey
+            elseif type(data.itemType) == "string" and data.itemType == itemFullType then
+                return typeKey
+            end
         end
     end
-
-    for i = 0, objs:size() - 1 do
-        local obj = objs:get(i)
-        if obj:getContainer() then
-            table.insert(containers, obj)
-            hasContainer = true
-        end
-    end
-
-    return hasContainer and containers or nil
+    return nil
 end
 
-local function walkToVehicle(character, part)
-    local vehicle = part:getVehicle()
-    local area = part:getArea()
+function GatherItemsAction:getAvailableContainers()
+    local containers = {}
+    local startSquare = self.dropSquare
+    if not startSquare then return containers end
 
-    if not vehicle or not area then return false end
-
-    if vehicle:canAccessContainer(part:getIndex(), character) then
-        return true
+    local vehicle = startSquare:getVehicleContainer()
+    if vehicle then
+        local parts = { "TrunkDoorOpened", "TruckBed", "TruckBedOpen" }
+        for _, partId in ipairs(parts) do
+            local part = vehicle:getPartById(partId) or vehicle:getTrailerTrunkPart()
+            if part and part:getItemContainer() then
+                table.insert(containers, part)
+            end
+        end
     end
 
+    local storageType = self:getStorageType()
+
+    if storageType then
+        local visited = {}
+        local queue = { startSquare }
+
+        local function getSqKey(sq) return sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ() end
+
+        while #queue > 0 do
+            local foundStorageOnSq = false
+            local currentSq = table.remove(queue, 1)
+            local key = getSqKey(currentSq)
+
+            if not visited[key] then
+                visited[key] = true
+
+                local objs = currentSq:getObjects()
+
+                for i = 0, objs:size() - 1 do
+                    local obj = objs:get(i)
+                    local modData = obj:getModData()
+
+                    if modData and modData.JB_AutoLogStorage == storageType then --obj:getContainer() then
+                        table.insert(containers, obj:getContainer())
+                        foundStorageOnSq = true
+                    elseif obj:getContainer() and not foundStorageOnSq then
+                        if not modData.JB_AutoLogStorage then
+                            --print("normal container")
+                            table.insert(containers, obj:getContainer())
+                        end
+                    end
+                end
+
+                if foundStorageOnSq and currentSq == startSquare then
+                    local x, y, z = currentSq:getX(), currentSq:getY(), currentSq:getZ()
+                    local cell = getCell()
+
+                    -- use square:getSurroundingSquares() array
+                    local neighbors = {
+                        cell:getGridSquare(x, y - 1, z), -- N
+                        cell:getGridSquare(x, y + 1, z), -- S
+                        cell:getGridSquare(x + 1, y, z), -- E
+                        cell:getGridSquare(x - 1, y, z)  -- W
+                    }
+
+                    for _, neighbor in ipairs(neighbors) do
+                        if neighbor and not visited[getSqKey(neighbor)] then
+                            table.insert(queue, neighbor)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return containers
+end
+
+local function walkToVehiclePartArea(character, part)
+    local vehicle = part:getVehicle()
+    local trunkPart = part:getVehiclePart()
+    local area = trunkPart:getArea()
+    if not vehicle or not area then return false end
+    if vehicle:canAccessContainer(trunkPart:getIndex(), character) then
+        return true
+    end
     local action = ISPathFindAction:pathToVehicleArea(character, vehicle, area)
     ISTimedActionQueue.add(action)
     return false
 end
 
 function GatherItemsAction:new(character, dropSquare, pickupSquares, itemsTable)
-    
-local filteredSquares = {}
+    local filteredSquares = {}
     if pickupSquares and pickupSquares.squares then
         for _, sq in ipairs(pickupSquares.squares) do
             if sq ~= dropSquare then
-                -- lets not pick shit up on the dropSquare
                 table.insert(filteredSquares, sq)
             end
         end
@@ -198,8 +253,10 @@ function GatherItemsAction:PickupItems()
         return
     end
 
-    local walkAction = ISWalkToTimedAction:new(self.character, self.currentSquare)
-    ISTimedActionQueue.add(walkAction)
+    if self.character:getSquare() ~= self.currentSquare then
+        local walkAction = ISWalkToTimedAction:new(self.character, self.currentSquare)
+        ISTimedActionQueue.add(walkAction)
+    end
 
     local time = 50
     local grabAction = grabWithDest(self.character, item, time, self.destContainer)
@@ -230,23 +287,7 @@ end
 function GatherItemsAction:DropOffItems()
     self.droppingItems = true
 
-    local containersOnSquare = getContainersOnSquare(self.dropSquare, self.character)
-    local targetVehiclePart = nil
-
-    if containersOnSquare then
-        for _, c in ipairs(containersOnSquare) do
-            if instanceof(c, "VehiclePart") then
-                targetVehiclePart = c
-                break
-            end
-        end
-    end
-
-    if targetVehiclePart then
-        if not walkToVehicle(self.character, targetVehiclePart) then return end
-    else
-        if not luautils.walkAdj(self.character, self.dropSquare, false) then return end
-    end
+    local destinations = self:getAvailableContainers()
 
     local playerContainers = getPlayerContainers(self.character)
     if not playerContainers then
@@ -257,6 +298,8 @@ function GatherItemsAction:DropOffItems()
 
     local actionsQueued = 0
     local BATCH_LIMIT = 20
+
+    local scheduledSquare = self.character:getSquare()
 
     for _, playerContainer in ipairs(playerContainers) do
         for itemType in pairs(self.itemTypes) do
@@ -269,44 +312,55 @@ function GatherItemsAction:DropOffItems()
                     local dropItem = dropItems:get(i)
                     local droppedToContainer = false
 
-                    if containersOnSquare then
-                        for _, container in ipairs(containersOnSquare) do
-                            if instanceof(container, "VehiclePart") then
-                                if container:getItemContainer():hasRoomFor(self.character, dropItem:getActualWeight()) then
-                                    ISTimedActionQueue.add(ISInventoryTransferAction:new(
-                                        self.character, dropItem, dropItem:getContainer(), container:getItemContainer(),
-                                        50
-                                    ))
-                                    return
-                                end
-                            else
-                                if container:getContainer() and
-                                    container:getContainer():hasRoomFor(self.character, dropItem:getActualWeight()) then
-                                    -- 1. Queue the transfer
-                                    ISTimedActionQueue.add(ISInventoryTransferAction:new(
-                                        self.character, dropItem, dropItem:getContainer(), container:getContainer(), 50
-                                    ))
-
-                                    -- 2. Queue the sprite update (The "Step 3" logic)
-                                    -- Check if this container is one of our custom storage units
-                                    if container:getModData() and container:getModData().JB_AutoLogStorage then
-                                        local updateAction = ISBaseTimedAction:new(self.character)
-                                        updateAction.maxTime = 1                      -- Run almost instantly after transfer
-                                        updateAction.perform = function()
-                                            JBLogging.Storage.UpdateSprite(container) -- Update the visual sprite
-                                            ISBaseTimedAction.perform(updateAction)
-                                        end
-                                        ISTimedActionQueue.add(updateAction)
-                                    end
-
-                                    return
-                                end
-                            end
+                    for _, container in ipairs(destinations) do
+                        
+                        local targetVehiclePart = nil
+                        if instanceof(container, "VehiclePart") then
+                            container = container:getItemContainer()
+                            targetVehiclePart = container
                         end
-                        --print("floor and containers are full...")
+
+                        if container:hasRoomFor(self.character, dropItem:getActualWeight()) then
+                            local containerObj = container:getParent()
+                            local destSquare = containerObj and containerObj:getSquare() or self.dropSquare
+
+                            self.dropSquare = destSquare
+                            
+                            if scheduledSquare ~= destSquare then
+                                if targetVehiclePart then
+                                    if not walkToVehiclePartArea(self.character, targetVehiclePart) then return end
+                                else
+                                    if not luautils.walkAdj(self.character, self.dropSquare, false) then return end
+                                end
+                                scheduledSquare = destSquare
+                            end
+
+                            ISTimedActionQueue.add(ISInventoryTransferAction:new(self.character, dropItem,
+                                dropItem:getContainer(), container, 50))
+
+                            if containerObj and containerObj:getModData() and containerObj:getModData().JB_AutoLogStorage then
+                                local updateAction = ISBaseTimedAction:new(self.character)
+                                updateAction.maxTime = 1
+                                updateAction.perform = function()
+                                    JBLogging.Storage.UpdateSprite(containerObj)
+                                    ISBaseTimedAction.perform(updateAction)
+                                end
+                                ISTimedActionQueue.add(updateAction)
+                            end
+
+                            droppedToContainer = true
+                            actionsQueued = actionsQueued + 1
+                            break
+                        end
                     end
 
                     if not droppedToContainer then
+                        if scheduledSquare ~= self.dropSquare then
+                            if luautils.walkAdj(self.character, self.dropSquare, false) then
+                                scheduledSquare = self.dropSquare
+                            end
+                        end
+
                         ISTimedActionQueue.add(ISInventoryTransferAction:new(
                             self.character, dropItem, dropItem:getContainer(),
                             ISInventoryPage.floorContainer[self.character:getPlayerNum() + 1], 50
