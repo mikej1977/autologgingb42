@@ -285,14 +285,14 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
 
     local showMenu = false
 
-    local storageOption = subMenu:addOption("Create Storage...", worldObjects, nil)
+    local storageOption = subMenu:addOption("Storage Options...", worldObjects, nil)
     local subMenuStorage = ISContextMenu:getNew(subMenu)
 
-    subMenuStorage:addOption("Logs Storage (100 Cap)", worldObjects, function()
+    subMenuStorage:addOption("Log Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Logs")
     end)
 
-    subMenuStorage:addOption("Planks Storage (100 Cap)", worldObjects, function()
+    subMenuStorage:addOption("Plank Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Planks")
     end)
 
@@ -303,6 +303,15 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     subMenuStorage:addOption("Firewood Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Firewood")
     end)
+
+    if clickedFlags.storageToRemove then
+        subMenuStorage:addOption("Remove Storage", worldObjects, function()
+            if luautils.walkAdj(playerObj, clickedFlags.storageToRemove:getSquare()) then
+                ISTimedActionQueue.add(JBRemoveStorageAction:new(playerObj, clickedFlags.storageToRemove, 50))
+            end
+        end)
+        showMenu = true
+    end
 
     for i = 1, #menuOptions do
         local option = menuOptions[i]
