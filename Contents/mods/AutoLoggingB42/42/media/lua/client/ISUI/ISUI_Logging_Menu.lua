@@ -101,7 +101,7 @@ JBLogging.OnTickKeepSpeed = function(tick)
     end
 
     if tick % 50 == 0 then
-        print("OnTick is running")
+        --print("OnTick is running")
     end
 
     if getGameSpeed() > 1 then

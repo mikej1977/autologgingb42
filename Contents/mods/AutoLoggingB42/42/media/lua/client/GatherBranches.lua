@@ -11,7 +11,7 @@ JBLogging.gatherTwigsAndBranches = function(stagingSquare, selectedSquares)
     local branchList = {}
     for _, square in ipairs(selectedSquares) do
         local objs = square:getWorldObjects()
-        print("Found " .. objs:size() .. " objects on this square")
+        --print("Found " .. objs:size() .. " objects on this square")
         for i = 0, objs:size() - 1 do
             local o = objs:get(i)
             for _, ftype in pairs(JBLogging.whatWeWant) do
@@ -30,7 +30,7 @@ JBLogging.gatherTwigsAndBranches = function(stagingSquare, selectedSquares)
         -- getCapacityWeight is amount currently carried
         -- getEffectiveCapacity is the most you can carry
         if JBLogging.playerInv:getCapacityWeight() + weight > JBLogging.playerInv:getEffectiveCapacity(JBLogging.playerObj) then
-            print("Queueing a drop off")
+            --print("Queueing a drop off")
             local drop = ISWalkToTimedAction:new(JBLogging.playerObj, stagingSquare)
             drop:setOnComplete(JBLogging.dropBranches, JBLogging.playerObj, stagingSquare)
             ISTimedActionQueue.add(drop)
