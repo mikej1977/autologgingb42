@@ -166,36 +166,36 @@ end
 JBSelectUtils.getMarkerLocation = function(x, y, minX, minY, maxX, maxY)
     local image
     if x == minX and y == minY then
-        print("SW")
+        --print("SW")
         local image = "JBSelectUtils.markerSW"
     end
     if x == maxX and y == minY then
         local image = "JBSelectUtils.markerNW"
-        print("NW")
+        --print("NW")
     end
     if x == minX and y == maxY then
         local image = "JBSelectUtils.markerSE"
-        print("SE")
+        --print("SE")
     end
     if x == maxX and y == maxY then
         local image = "JBSelectUtils.markerNE"
-        print("NE")
+        --print("NE")
     end
     if x == minX and (y ~= minY and y ~= maxY) then
         local image = "JBSelectUtils.markerS"
-        print("S")
+        --print("S")
     end
     if x == maxX and (y ~= minY and y ~= maxY) then
         local image = "JBSelectUtils.markerN"
-        print("N")
+        --print("N")
     end
     if y == minY and (x ~= minX and x ~= maxX) then
         local image = "JBSelectUtils.markerW"
-        print("W")
+        --print("W")
     end
     if y == maxY and (x ~= minX and x ~= maxX) then
         local image = "JBSelectUtils.markerE"
-        print("E")
+        --print("E")
     end
     return image
 end

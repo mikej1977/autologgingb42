@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode x_extends="Dig.xml">
+	<m_Name>JBBW_DigStumpShovel</m_Name>
+	<m_AnimName>Bob_Dig_Shovel</m_AnimName>
+	<m_Conditions>
+		<m_StringValue>PerformingAction</m_StringValue>
+		<m_Type>STRING</m_Type>
+		<m_StringValue>JBBW_DigStumpShovel</m_StringValue>
+	</m_Conditions>
+    <m_BlendTime>0.20</m_BlendTime>
+	<m_SpeedScale>0.80</m_SpeedScale>
+	<m_Events>
+		<m_EventName>DigStumpShovelSound</m_EventName>
+		<m_TimePc>0.02</m_TimePc>
+		<m_ParameterValue></m_ParameterValue>
+	</m_Events>
+</animNode>
