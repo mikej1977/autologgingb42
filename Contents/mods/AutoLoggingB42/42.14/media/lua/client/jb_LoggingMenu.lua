@@ -1,7 +1,7 @@
 JBLogging = JBLogging or {}
 require("jb_ModOptions")
 require("jb_ItemList")
-
+require("jb_removeStorageAction")
 local JB_ASSUtils = require("JB_ASSUtils")
 
 local old_ISChopTreeAction_new = ISChopTreeAction.new
@@ -56,6 +56,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         stump = false,
         canChopFirewood = false,
         firewoodRecipe = nil,
+        storageToRemove = nil,
     }
 
     local subMenu = ISContextMenu:getNew(context)
@@ -209,6 +210,9 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
             elseif o:getSprite() and o:getSprite():getProperties() and o:getSprite():getProperties():has(IsoFlagType.canBeCut) then
                 clickedFlags.bush = true
             end
+            if o:getModData() and o:getModData().JB_AutoLogStorage then
+                clickedFlags.storageToRemove = o
+            end
         end
 
         if square:HasTree() then
@@ -285,14 +289,14 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
 
     local showMenu = false
 
-    local storageOption = subMenu:addOption("Create Storage...", worldObjects, nil)
+    local storageOption = subMenu:addOption("Storage Options...", worldObjects, nil)
     local subMenuStorage = ISContextMenu:getNew(subMenu)
 
-    subMenuStorage:addOption("Logs Storage (100 Cap)", worldObjects, function()
+    subMenuStorage:addOption("Log Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Logs")
     end)
 
-    subMenuStorage:addOption("Planks Storage (100 Cap)", worldObjects, function()
+    subMenuStorage:addOption("Plank Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Planks")
     end)
 
@@ -303,6 +307,15 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     subMenuStorage:addOption("Firewood Storage (100 Cap)", worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Firewood")
     end)
+
+    if clickedFlags.storageToRemove then
+        subMenuStorage:addOption("Remove Storage", worldObjects, function()
+            if luautils.walkAdj(playerObj, clickedFlags.storageToRemove:getSquare()) then
+                ISTimedActionQueue.add(JBRemoveStorageAction:new(playerObj, clickedFlags.storageToRemove, 50))
+            end
+        end)
+        showMenu = true
+    end
 
     for i = 1, #menuOptions do
         local option = menuOptions[i]
