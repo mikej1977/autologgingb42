@@ -94,7 +94,7 @@ function GatherItemsAction:getAvailableContainers()
                     local x, y, z = currentSq:getX(), currentSq:getY(), currentSq:getZ()
                     local cell = getCell()
 
-                    -- use square:getSurroundingSquares() array
+                    -- use square:getSurroundingSquares() array?
                     local neighbors = {
                         cell:getGridSquare(x, y - 1, z), -- N
                         cell:getGridSquare(x, y + 1, z), -- S
@@ -203,9 +203,14 @@ function GatherItemsAction:GetItemsOnSquare()
     local items = self.currentSquare:getObjects()
     if items:size() == 0 then return end
 
+    -- ScriptManager.instance:getItem(item:getProperty("CustomName"))
+
     for i = 0, items:size() - 1 do
         local item = items:get(i)
         if instanceof(item, "IsoWorldInventoryObject") and self.itemTypes[item:getItem():getFullType()] then
+            table.insert(self.currentItems, item)
+        -- check for shit like stones and stumps that are tiles
+        elseif self.itemTypes[item:getProperty("CustomName")] then
             table.insert(self.currentItems, item)
         end
     end
@@ -223,6 +228,25 @@ function GatherItemsAction:PickupItems()
 
     local i = #self.currentItems
     local item = self.currentItems[i]
+
+    -- is this an item that's not an item?
+    local customName = item:getProperty("CustomName")
+
+    if customName and self.itemTypes[customName] and not instanceof(item, "IsoWorldInventoryObject") then
+        print("Converting to an item...")
+
+        local pickupItem = instanceItem(JBLogging.pickupItems[customName])
+        local newItem = self.currentSquare:AddWorldInventoryItem(pickupItem, 0.5, 0.5, 0)
+        local worldItem = newItem:getWorldItem()
+
+        self.currentSquare:transmitRemoveItemFromSquare(item)
+        if item:getSquare() then
+            item:getSquare():RemoveTileObject(item)
+        end
+
+        item = worldItem
+        self.currentItems[i] = item
+    end
 
     if not self.destContainer or not self.destContainer:hasRoomFor(self.character, item:getItem()) then
         self:SetDestContainer(item)
@@ -267,6 +291,7 @@ function GatherItemsAction:PickupItems()
 end
 
 function GatherItemsAction:SetDestContainer(item)
+    print("item: ", item)
     if self.destContainer and self.destContainer:hasRoomFor(self.character, item:getItem()) then
         return
     end

@@ -21,13 +21,21 @@ end
 
 function JBRemoveStorageAction:perform()
     local square = self.storageObj:getSquare()
-    
+
     if isClient() then
         square:transmitRemoveItemFromSquare(self.storageObj)
     end
     square:RemoveTileObject(self.storageObj)
-    
+
     ISBaseTimedAction.perform(self)
+    triggerEvent("OnContainerUpdate")
+end
+
+function JBRemoveStorageAction:getDuration()
+    if self.character:isTimedActionInstant() then
+        return 1
+    end
+    return 50
 end
 
 function JBRemoveStorageAction:new(character, storageObj, time)
@@ -38,7 +46,8 @@ function JBRemoveStorageAction:new(character, storageObj, time)
     o.storageObj = storageObj
     o.stopOnWalk = true
     o.stopOnRun = true
-    o.maxTime = time
+    o.maxTime = time or 50
     if o.character:isTimedActionInstant() then o.maxTime = 1 end
+
     return o
 end

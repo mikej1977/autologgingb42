@@ -117,11 +117,15 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
     end
 
     local cell = square:getCell()
-    local finalSprite = spriteName or "blends_natural_01_64" -- dirt
+
+    local data = JBLogging.Storage.Types[typeKey]
+    local finalSprite = (data and data.sprites.empty) or "blends_natural_01_64"
 
     local storageObj = IsoThumpable.new(cell, square, finalSprite, north, {})
     storageObj:setIsThumpable(false)
     storageObj:setCanPassThrough(true)
+    storageObj:setMaxHealth(500)
+    storageObj:setHealth(500)
 
     local container = storageObj:getContainer()
     if not container then
@@ -136,13 +140,14 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
     local modData = storageObj:getModData()
     modData.JB_AutoLogStorage = typeKey
 
-    JBLogging.Storage.UpdateSprite(storageObj)
-
     square:AddSpecialObject(storageObj)
-    storageObj:transmitModData()
-    storageObj:transmitCompleteItemToClients()
-    square:RecalcAllWithNeighbours(true)
 
+    if not isClient() then
+        storageObj:transmitModData()
+        storageObj:transmitCompleteItemToClients()
+    end
+
+    square:RecalcAllWithNeighbours(true)
     triggerEvent("OnContainerUpdate")
 end
 
@@ -205,12 +210,13 @@ JBLogging.Storage.UpdateSprite = function(object)
 
     if object:getSpriteName() ~= spriteName then
         object:setSpriteFromName(spriteName)
-        object:transmitUpdatedSpriteToClients()
-        object:transmitCompleteItemToClients()
-        --object:sendObjectChange('sprite')
-        object:sendObjectChange(IsoObjectChange.SPRITE)
         object:transmitModData()
+        if isServer() then 
+            object:sendObjectChange(IsoObjectChange.SPRITE)
+            object:transmitUpdatedSpriteToClients()
+        end
     end
+    triggerEvent("OnContainerUpdate")
 end
 
 JBLogging.Storage.CheckSquare = function(square)
@@ -286,5 +292,31 @@ Events.OnObjectAboutToBeRemoved.Add(function(obj)
         end
     end
 end)
+
+Events.LoadGridsquare.Add(function(square)
+    if not square then return end
+    JBLogging.Storage.CheckSquare(square)
+end)
+
+if isServer() then
+    Events.OnClientCommand.Add(function(module, command, player, args)
+        if module == "JBLogging" and command == "PlaceStorage" then
+            local cell = getCell()
+            if not cell then return end
+
+            local square = cell:getGridSquare(args.x, args.y, args.z)
+            if square then
+                JBLogging.Storage.PlaceStorage(
+                    player,
+                    nil,
+                    square,
+                    args.typeKey,
+                    args.isNorthSprite,
+                    args.buildObjName
+                )
+            end
+        end
+    end)
+end
 
 return JBLogging

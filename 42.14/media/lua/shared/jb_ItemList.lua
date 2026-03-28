@@ -28,7 +28,26 @@ JBLogging.GatherItemList = {
 
     Firewood = {
         ["Base.Firewood"] = true,
-    }
+    },
+
+    Stones = {
+        ["4Stones"] = true,
+        ["LargeStoneTwigs"] = true,
+        ["LargeStone"] = true,
+        ["FlatStone"] = true,
+        ["StoneTwigs"] = true,
+        ["Stone"] = true,
+        ["Limestone"] = true,
+        ["Base.FlatStone"] = true,
+        ["Base.LargeStone"] = true,
+        ["Base.Limestone"] = true,
+        ["Base.Stone2"] = true,
+    },
+
+    Stumps = {
+        ["Small Stump"] = true,
+        ["Stump"] = true,
+    },
 }
 
 JBLogging.ProcessList = {
@@ -37,4 +56,17 @@ JBLogging.ProcessList = {
         ["JB_Big_Wood.LargeLog"] = true,
         ["JB_Big_Wood.VeryLargeLog"] = true,
     }
+}
+
+-- For custom name pickup item lookups
+JBLogging.pickupItems = {
+    ["4Stones"] = "Stone2",
+    ["LargeStoneTwigs"] = "LargeStone",
+    ["LargeStone"] = "LargeStone",
+    ["FlatStone"] = "FlatStone",
+    ["StoneTwigs"] = "Stone2",
+    ["Stone"] = "Stone2",
+    ["Limestone"] = "Limestone",
+    ["Stump"] = "UnusableWood",
+    ["Small Stump"] = "UnusableWood",
 }

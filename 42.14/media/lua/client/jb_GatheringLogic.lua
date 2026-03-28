@@ -43,3 +43,14 @@ JBLogging.gatherFirewood = function(playerObj, worldObjects, selectedSquare, sel
         JBLogging.GatherItemList.Firewood
     )
 end
+
+JBLogging.gatherStones = function(playerObj, worldObjects, selectedSquare, selectedArea)
+    if not selectedSquare or not selectedArea then return end
+
+    GatherItemsAction:new(
+        playerObj,
+        selectedSquare,
+        selectedArea,
+        JBLogging.GatherItemList.Stones
+    )    
+end

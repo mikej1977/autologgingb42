@@ -53,6 +53,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         bush = false,
         grass = false,
         stump = false,
+        stones = false,
         canChopFirewood = false,
         firewoodRecipe = nil,
         storageToRemove = nil,
@@ -63,8 +64,8 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     local modOptions = PZAPI.ModOptions:getOptions("JBLoggingModOptions")
     local alwaysShowMenu = modOptions:getOption("Always_Show_Menu"):getValue(1)
     local keepOnTop = modOptions:getOption("Keep_Menu_At_Top"):getValue(1)
-
     local highlightColorData = modOptions:getOption("Select_Color"):getValue()
+
     JB_ASSUtils.highlightColorData = { r = highlightColorData.r, g = highlightColorData.g, b = highlightColorData.b }
     playerObj:getModData().highlightColorData = { r = highlightColorData.r, g = highlightColorData.g, b =
     highlightColorData.b }
@@ -166,12 +167,17 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
 
                 local sprite = o:getSprite()
                 local props = sprite and sprite:getProperties()
-                local isStump = props:has("CustomName") and props:get("CustomName") or nil
-                if isStump then
-                    if isStump == "Small Stump" or isStump == "Stump" then
+                local customName = props:has("CustomName") and props:get("CustomName") or nil
+                if customName then
+                    if JBLogging.GatherItemList.Stumps[customName] then
                         clickedFlags.stump = true
                     end
+                    if JBLogging.GatherItemList.Stones[customName] then
+                        clickedFlags.stones = true
+                    end
                 end
+
+                -- if item is a stone then stones == true
 
                 if JBLogging.GatherItemList.Firewood[fullType] then
                     clickedFlags.firewood = true
@@ -246,6 +252,12 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         },
         {
             category = "Gathering...",
+            condition = clickedFlags.stones,
+            translate = "UI_JBLogging_Menu_Gather_Stones",
+            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherStones) end
+        },
+        {
+            category = "Gathering...",
             condition = clickedFlags.twig,
             translate = "UI_JBLogging_Menu_Gather_Branches",
             action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p,
@@ -312,18 +324,18 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         end
     end
 
-    local storageMenu = getCategoryMenu("Storage Options...")
+    local storageMenu = getCategoryMenu(getText("UI_JBLogging_StorageMenuTitle"))
 
-    storageMenu:addOption("Log Storage (100 Cap)", worldObjects, function()
+    storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Logs")
     end)
-    storageMenu:addOption("Plank Storage (100 Cap)", worldObjects, function()
+    storageMenu:addOption(getText("UI_JBLogging_PlankStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Planks")
     end)
-    storageMenu:addOption("Scrap Wood Storage (100 Cap)", worldObjects, function()
+    storageMenu:addOption(getText("UI_JBLogging_ScrapWoodStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Twigs")
     end)
-    storageMenu:addOption("Firewood Storage (100 Cap)", worldObjects, function()
+    storageMenu:addOption(getText("UI_JBLogging_FirewoodStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Firewood")
     end)
 
