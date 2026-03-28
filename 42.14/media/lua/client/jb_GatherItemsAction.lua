@@ -130,6 +130,7 @@ end
 
 function GatherItemsAction:new(character, dropSquare, pickupSquares, itemsTable)
     local filteredSquares = {}
+
     if pickupSquares and pickupSquares.squares then
         for _, sq in ipairs(pickupSquares.squares) do
             if sq ~= dropSquare then
@@ -137,6 +138,13 @@ function GatherItemsAction:new(character, dropSquare, pickupSquares, itemsTable)
             end
         end
     end
+
+    local px, py = character:getX(), character:getY()
+    table.sort(filteredSquares, function(a, b)
+        local distA = IsoUtils.DistanceTo(a:getX(), a:getY(), px, py)
+        local distB = IsoUtils.DistanceTo(b:getX(), b:getY(), px, py)
+        return distA > distB
+    end)
 
     local t = {
         character = character,
@@ -172,26 +180,15 @@ function GatherItemsAction:IsCancel()
 end
 
 function GatherItemsAction:GetNextSquare()
-    local closestIndex = nil
-    local minDistance = math.huge
-    local px, py = self.character:getX(), self.character:getY()
-
-    for index, square in ipairs(self.pickupSquares) do
-        local distance = IsoUtils.DistanceTo(square:getX(), square:getY(), px, py)
-        if distance < minDistance then
-            minDistance = distance
-            closestIndex = index
-        end
-    end
-
-    if closestIndex then
-        local closest = table.remove(self.pickupSquares, closestIndex)
-        self.lastSquare = #self.pickupSquares < 1
-        self.currentSquare = closest
-        return closest
+    local count = #self.pickupSquares
+    if count > 0 then
+        self.currentSquare = self.pickupSquares[count]
+        self.lastSquare = count == 1
+        return self.currentSquare
     end
 
     self.currentSquare = nil
+
 end
 
 function GatherItemsAction:GetItemsOnSquare()
@@ -222,35 +219,38 @@ end
 
 function GatherItemsAction:PickupItems()
     if not self.currentItems or #self.currentItems == 0 then
+        if self.currentSquare then
+            table.remove(self.pickupSquares)
+        end
         self.currentSquare = nil
         return
     end
 
     local i = #self.currentItems
     local item = self.currentItems[i]
-
-    -- is this an item that's not an item?
     local customName = item:getProperty("CustomName")
+    local isTile = customName and self.itemTypes[customName] and not instanceof(item, "IsoWorldInventoryObject")
 
-    if customName and self.itemTypes[customName] and not instanceof(item, "IsoWorldInventoryObject") then
-        print("Converting to an item...")
+    local yieldType = nil
+    local weight = 0
 
-        local pickupItem = instanceItem(JBLogging.pickupItems[customName])
-        local newItem = self.currentSquare:AddWorldInventoryItem(pickupItem, 0.5, 0.5, 0)
-        local worldItem = newItem:getWorldItem()
-
-        self.currentSquare:transmitRemoveItemFromSquare(item)
-        if item:getSquare() then
-            item:getSquare():RemoveTileObject(item)
-        end
-
-        item = worldItem
-        self.currentItems[i] = item
+    if isTile then
+        yieldType = JBLogging.pickupItems[customName]
+        if not yieldType:find("%.") then yieldType = "Base." .. yieldType end
+        local scriptItem = ScriptManager.instance:getItem(yieldType)
+        weight = scriptItem and scriptItem:getActualWeight() or 1.0
+    else
+        yieldType = item:getItem():getFullType()
+        weight = item:getItem():getActualWeight()
     end
 
-    if not self.destContainer or not self.destContainer:hasRoomFor(self.character, item:getItem()) then
+    if not self.destContainer or not self.destContainer:hasRoomFor(self.character, weight) then
+        self:SetDestContainerByWeight(yieldType, weight)
+    end
+
+    --[[     if not self.destContainer or not self.destContainer:hasRoomFor(self.character, item:getItem()) then
         self:SetDestContainer(item)
-    end
+    end ]]
 
     if not self.destContainer then
         local hasFreeSpace = false
@@ -282,16 +282,18 @@ function GatherItemsAction:PickupItems()
         ISTimedActionQueue.add(walkAction)
     end
 
-    local time = 50
-    local grabAction = grabWithDest(self.character, item, time, self.destContainer)
-    ISTimedActionQueue.add(grabAction)
+    if isTile then
+        ISTimedActionQueue.add(JB_GatherSpriteAction:new(self.character, item, yieldType, self.destContainer, 100))
+    else
+        local time = 50
+        local grabAction = grabWithDest(self.character, item, time, self.destContainer)
+        ISTimedActionQueue.add(grabAction)
+    end
 
     table.remove(self.currentItems, i)
     return
 end
-
 function GatherItemsAction:SetDestContainer(item)
-    print("item: ", item)
     if self.destContainer and self.destContainer:hasRoomFor(self.character, item:getItem()) then
         return
     end
@@ -307,6 +309,26 @@ function GatherItemsAction:SetDestContainer(item)
         end
     end
     self.destContainer = nil
+end
+
+function GatherItemsAction:SetDestContainerByWeight(type, weight)
+    if self.destContainer and self.destContainer:hasRoomFor(self.character, weight) then
+        return
+    end
+
+    local containers = getPlayerContainers(self.character)
+    if not containers then return end
+
+    for _, container in ipairs(containers) do
+        local contInv = container
+        if contInv:hasRoomFor(self.character, weight) and contInv:getType() ~= "KeyRing" then
+            self.destContainer = contInv
+            return
+        end
+    end
+    
+    self.destContainer = nil
+
 end
 
 function GatherItemsAction:DropOffItems()

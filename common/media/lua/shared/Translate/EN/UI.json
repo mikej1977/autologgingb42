@@ -10,6 +10,8 @@
     "UI_JBLogging_Menu_Clear_Bushes": "Clear Bushes",
     "UI_JBLogging_Menu_Clear_Grass": "Cut Grass & Weeds",
     "UI_JBLogging_Menu_Clear_Grass_Hand": "Pull Grass & Weeds By Hand",
+    "UI_JBLogging_Menu_Clear_Stumps": "Clear Tree Stumps",
+
     "UI_JBLogging_Menu_Gather_Branches": "Gather Twigs and Branches",
     "UI_JBLogging_Menu_Saw_Planks": "Saw Logs Into Planks",
     "UI_JBLogging_Menu_Gather_Planks": "Gather Planks",
@@ -60,7 +62,7 @@
     "UI_JBLogging_StorageMenuTitle": "Storage Options...",
     "UI_JBLogging_LogStorage": "Log Storage",
     "UI_JBLogging_PlankStorage": "Plank Storage",
-    "UI_JBLogging_ScrapWoodStorage": "ScrapWoodStorage",
+    "UI_JBLogging_ScrapWoodStorage": "Scrap Wood Storage",
     "UI_JBLogging_FirewoodStorage": "Firewood Storage"
 
 }

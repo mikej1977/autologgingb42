@@ -2,6 +2,9 @@
 JBLogging = JBLogging or {}
 require("jb_ActionPlayer")
 
+local function predicateRemoveStump(item)
+    return not item:isBroken() and item:hasTag(ItemTag.REMOVE_STUMP)
+end
 local function getDistSq(square, x, y)
     local dx = square:getX() - x
     local dy = square:getY() - y
@@ -25,9 +28,21 @@ local function isValidForClear(square, clearType)
                 return true
             end
         end
-    end
+    elseif clearType == "Stump" then
+        for i = 0, square:getObjects():size() - 1 do
+            local o = square:getObjects():get(i)
+            local sprite = o:getSprite()
+            local props = sprite and sprite:getProperties()
+            local customName = props and props:has("CustomName") and props:get("CustomName") or nil
+            if customName then
+                if JBLogging.GatherItemList.Stumps[customName] then
+                    return true
+                end
+            end
+        end
 
-    return false
+        return false
+    end
 end
 
 JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
@@ -86,6 +101,27 @@ JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
                 ISWorldObjectContextMenu.doRemovePlant,
                 { playerObj, square, false }
             )
+        elseif clearType == "Stump" then
+            local stumpObj = nil
+            for i = 0, square:getObjects():size() - 1 do
+                local o = square:getObjects():get(i)
+                if o:isStump() then
+                    stumpObj = o
+                    break
+                end
+            end
+            if stumpObj then
+                ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), predicateRemoveStump, true, true)
+                JBLogging.ActionPlayer.addToQueue(
+                    playerObj,
+                    function(p, s)
+                        if luautils.walkAdj(p, s:getSquare()) then
+                            ISTimedActionQueue.add(ISPickAxeGroundCoverItem:new(p, s))
+                        end
+                    end,
+                    { playerObj, stumpObj }
+                )
+            end
         end
     end
 end

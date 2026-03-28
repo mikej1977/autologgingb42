@@ -27,6 +27,14 @@ local function predicateCutPlant(item)
     return not item:isBroken() and item:hasTag(ItemTag.CUT_PLANT)
 end
 
+local function predicateDigging(item)
+    if item:isBroken() then return false end
+    
+    local type = item:getType()
+    return item:hasTag(ItemTag.HAMMER) or item:hasTag(ItemTag.SLEDGEHAMMER) or item:hasTag(ItemTag.CLUB_HAMMER) or
+        item:hasTag(ItemTag.PICK_AXE) or type == "PickAxe" or item:hasTag(ItemTag.STONE_MAUL)
+end
+
 JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test)
     local JBBW = getActivatedMods():contains("\\JB_Big_Wood") -- the best wood
     if test then
@@ -41,7 +49,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     local axe = playerInv:getFirstEvalRecurse(predicateChopTree)
     local hasCuttingTool = playerInv:containsEvalRecurse(predicateCutPlant)
     local hasWoodSaw = playerInv:containsEvalRecurse(predicateWoodSaw)
-
+    local hasDiggingTool = playerInv:containsEvalRecurse(predicateDigging)
     local clickedFlags = {
         tree = false,
         logs = false,
@@ -67,8 +75,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     local highlightColorData = modOptions:getOption("Select_Color"):getValue()
 
     JB_ASSUtils.highlightColorData = { r = highlightColorData.r, g = highlightColorData.g, b = highlightColorData.b }
-    playerObj:getModData().highlightColorData = { r = highlightColorData.r, g = highlightColorData.g, b =
-    highlightColorData.b }
+    playerObj:getModData().highlightColorData = { r = highlightColorData.r, g = highlightColorData.g, b = highlightColorData.b }
 
     local sq = worldObjects[1]:getSquare()
     local z = sq:getZ()
@@ -165,20 +172,6 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
                 local item = o:getItem()
                 local fullType = item:getFullType()
 
-                local sprite = o:getSprite()
-                local props = sprite and sprite:getProperties()
-                local customName = props:has("CustomName") and props:get("CustomName") or nil
-                if customName then
-                    if JBLogging.GatherItemList.Stumps[customName] then
-                        clickedFlags.stump = true
-                    end
-                    if JBLogging.GatherItemList.Stones[customName] then
-                        clickedFlags.stones = true
-                    end
-                end
-
-                -- if item is a stone then stones == true
-
                 if JBLogging.GatherItemList.Firewood[fullType] then
                     clickedFlags.firewood = true
                 end
@@ -213,6 +206,18 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
                 clickedFlags.grass = true
             elseif o:getSprite() and o:getSprite():getProperties() and o:getSprite():getProperties():has(IsoFlagType.canBeCut) then
                 clickedFlags.bush = true
+            end
+
+            local sprite = o:getSprite()
+            local props = sprite and sprite:getProperties()
+            local customName = props:has("CustomName") and props:get("CustomName") or nil
+            if customName then
+                if hasDiggingTool and JBLogging.GatherItemList.Stumps[customName] then
+                    clickedFlags.stump = true
+                end
+                if JBLogging.GatherItemList.Stones[customName] then
+                    clickedFlags.stones = true
+                end
             end
 
             if o:getModData() and o:getModData().JB_AutoLogStorage then
@@ -260,8 +265,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
             category = "Gathering...",
             condition = clickedFlags.twig,
             translate = "UI_JBLogging_Menu_Gather_Branches",
-            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p,
-                    JBLogging.gatherTwigsAndBranches) end
+            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherTwigsAndBranches) end
         },
 
         {
@@ -269,6 +273,13 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
             condition = axe and clickedFlags.tree,
             translate = "UI_JBLogging_Menu_Clear_Trees",
             action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Tree") end
+        },
+
+        {
+            category = "Clearing...",
+            condition = axe and clickedFlags.stump,
+            translate = "UI_JBLogging_Menu_Clear_Stumps",
+            action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Stump") end
         },
         {
             category = "Clearing...",
