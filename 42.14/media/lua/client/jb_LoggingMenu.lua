@@ -3,6 +3,7 @@ require("jb_ModOptions")
 require("jb_ItemList")
 require("jb_removeStorageAction")
 local JB_ASSUtils = require("JB_ASSUtils")
+local jb_LoggingMenu = require("backup.42.13.media.lua.client.jb_LoggingMenu")
 
 local old_ISChopTreeAction_new = ISChopTreeAction.new
 function ISChopTreeAction:new(character, tree)
@@ -29,7 +30,6 @@ end
 
 local function predicateDigging(item)
     if item:isBroken() then return false end
-    
     local type = item:getType()
     return item:hasTag(ItemTag.HAMMER) or item:hasTag(ItemTag.SLEDGEHAMMER) or item:hasTag(ItemTag.CLUB_HAMMER) or
         item:hasTag(ItemTag.PICK_AXE) or type == "PickAxe" or item:hasTag(ItemTag.STONE_MAUL)
@@ -62,6 +62,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         grass = false,
         stump = false,
         stones = false,
+        boulder = false,
         canChopFirewood = false,
         firewoodRecipe = nil,
         storageToRemove = nil,
@@ -132,6 +133,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
 
             return false
         end
+
         local function getFirewoodRecipes(obj, playerObj)
             local containers = ISInventoryPaneContextMenu.getContainers(playerObj)
             if not containers then return end
@@ -176,6 +178,10 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
                     clickedFlags.firewood = true
                 end
 
+                if JBLogging.GatherItemList.Stones[fullType] then
+                    clickedFlags.stones = true
+                end
+
                 if JBLogging.GatherItemList.Logs[fullType] then
                     clickedFlags.logs = true
 
@@ -218,6 +224,12 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
                 if JBLogging.GatherItemList.Stones[customName] then
                     clickedFlags.stones = true
                 end
+                if JBLogging.GatherItemList.Boulders[customName] then
+                    clickedFlags.boulder = true
+                end
+                if JBLogging.GatherItemList.Logs[customName] then
+                    clickedFlags.logs = true
+                end
             end
 
             if o:getModData() and o:getModData().JB_AutoLogStorage then
@@ -238,104 +250,164 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
 
     local menuOptions = {
         {
-            category = "Gathering...",
+            category = "UI_JBLogging_Category_Gathering",
             condition = clickedFlags.logs,
             translate = "UI_JBLogging_Menu_Gather_Logs",
-            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherLogs) end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Logs",
+            action = function(worldObjs, p)
+                JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherLogs)
+            end
         },
         {
-            category = "Gathering...",
+            category = "UI_JBLogging_Category_Gathering",
             condition = clickedFlags.plank,
             translate = "UI_JBLogging_Menu_Gather_Planks",
-            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherPlanks) end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Planks",
+            action = function(worldObjs, p)
+                JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherPlanks)
+            end
         },
         {
-            category = "Gathering...",
+            category = "UI_JBLogging_Category_Gathering",
             condition = clickedFlags.firewood,
             translate = "UI_JBLogging_Menu_Gather_Firewood",
-            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherFirewood) end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Firewood",
+            action = function(worldObjs, p) 
+                JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherFirewood) 
+            end
         },
         {
-            category = "Gathering...",
+            category = "UI_JBLogging_Category_Gathering",
             condition = clickedFlags.stones,
             translate = "UI_JBLogging_Menu_Gather_Stones",
-            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherStones) end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Stones",
+            action = function(worldObjs, p) 
+                JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherStones) 
+            end
         },
         {
-            category = "Gathering...",
+            category = "UI_JBLogging_Category_Gathering",
             condition = clickedFlags.twig,
             translate = "UI_JBLogging_Menu_Gather_Branches",
-            action = function(worldObjs, p) JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherTwigsAndBranches) end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Branches",
+            action = function(worldObjs, p) 
+                JB_ASSUtils.SelectSquareAndArea(worldObjs, p, JBLogging.gatherTwigsAndBranches) 
+            end
         },
-
         {
-            category = "Clearing...",
+            category = "UI_JBLogging_Category_Clearing",
             condition = axe and clickedFlags.tree,
             translate = "UI_JBLogging_Menu_Clear_Trees",
-            action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Tree") end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Trees",
+            reqTag = "UI_JBLogging_Menu_Req_Clear_Trees",
+            action = function(worldObjs, p) 
+                JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Tree") 
+            end
         },
-
         {
-            category = "Clearing...",
+            category = "UI_JBLogging_Category_Clearing",
             condition = axe and clickedFlags.stump,
             translate = "UI_JBLogging_Menu_Clear_Stumps",
-            action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Stump") end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Stumps",
+            reqTag = "UI_JBLogging_Menu_Req_Clear_Stumps",
+            action = function(worldObjs, p)
+                JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Stump")
+            end
         },
         {
-            category = "Clearing...",
+            category = "UI_JBLogging_Category_Clearing",
             condition = hasCuttingTool and clickedFlags.bush,
             translate = "UI_JBLogging_Menu_Clear_Bushes",
-            action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Bush") end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Bushes",
+            reqTag = "UI_JBLogging_Menu_Req_Clear_Bushes",
+            action = function(worldObjs, p)
+                JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Bush")
+            end
         },
         {
-            category = "Clearing...",
+            category = "UI_JBLogging_Category_Clearing",
             condition = clickedFlags.grass,
             translate = "UI_JBLogging_Menu_Clear_Grass",
-            action = function(worldObjs, p) JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Grass") end
+            tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Grass",
+            reqTag = "UI_JBLogging_Menu_Req_Clear_Grass",
+            action = function(worldObjs, p)
+                JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Grass")
+            end
         },
-
         {
-            category = "Processing...",
+            category = "UI_JBLogging_Category_Clearing",
+            condition = hasDiggingTool and clickedFlags.boulder,
+            translate = "UI_JBLogging_Menu_Clear_Boulders",
+            tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Boulders",
+            reqTag = "UI_JBLogging_Menu_Req_Clear_Boulders",
+            action = function(worldObjs, p)
+                JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedClear, "Boulder") 
+            end
+        },
+        {
+            category = "UI_JBLogging_Category_Processing",
             condition = clickedFlags.canSawPlanks and clickedFlags.logs,
             translate = "UI_JBLogging_Menu_Saw_Planks",
+            tooltip = "UI_JBLogging_Menu_Tooltip_Saw_Planks",
+            reqTag = "UI_JBLogging_Menu_Req_Saw_Planks",
             action = function(worldObjs, p)
                 JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedProcess, clickedFlags.sawRecipe)
             end
         },
         {
-            category = "Processing...",
+            category = "UI_JBLogging_Category_Processing",
             condition = clickedFlags.canChopFirewood and clickedFlags.logs,
             translate = "UI_JBLogging_Chop_Firewood",
+            tooltip = "UI_JBLogging_Menu_Tooltip_Chop_Firewood",
+            reqTag = "UI_JBLogging_Menu_Req_Chop_Firewood",
             action = function(worldObjs, p)
                 JB_ASSUtils.SelectArea(worldObjs, p, JBLogging.unifiedProcess, clickedFlags.firewoodRecipe)
             end
         },
     }
-
     local showMenu = false
     local categoryMenus = {}
 
-    local function getCategoryMenu(catName)
-        if not categoryMenus[catName] then
-            local catOption = subMenu:addOption(catName, worldObjects, nil)
+    local function getCategoryMenu(catKey)
+        if not categoryMenus[catKey] then
+            local catOption = subMenu:addOption(getText(catKey), worldObjects, nil)
             local newSub = ISContextMenu:getNew(subMenu)
             context:addSubMenu(catOption, newSub)
-            categoryMenus[catName] = newSub
+            categoryMenus[catKey] = newSub
         end
-        return categoryMenus[catName]
+        return categoryMenus[catKey]
     end
 
     for i = 1, #menuOptions do
         local option = menuOptions[i]
         if option.condition or alwaysShowMenu then
             local catMenu = getCategoryMenu(option.category)
-            catMenu:addOption(getText(option.translate), worldObjects, option.action, playerObj,
+
+            local newOption = catMenu:addOption(getText(option.translate), worldObjects, option.action, playerObj,
                 unpack(option.params or {}))
+
+            if option.tooltip then
+                local tooltip = ISWorldObjectContextMenu.addToolTip()
+                tooltip:setName(getText(option.translate))
+
+                local desc = getText(option.tooltip)
+
+                --[[ if option.reqTag then
+                    local color = option.condition and " <RGB:0,1,0> " or " <RGB:1,0,0> "
+                    desc = desc .. "\n\n" .. color .. getText("UI_JBLogging_Menu_Tooltip_Requires") .. ": " .. getText(option.reqTag)
+                end ]]
+
+                tooltip:setDescription(desc)
+                newOption.toolTip = tooltip
+            end
             showMenu = true
         end
     end
+    local storageMenu = getCategoryMenu("UI_JBLogging_StorageMenuTitle")
 
-    local storageMenu = getCategoryMenu(getText("UI_JBLogging_StorageMenuTitle"))
+    storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
+        JBLogging.Storage.Create(playerObj, "Logs")
+    end)
 
     storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Logs")
@@ -351,22 +423,22 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     end)
 
     if clickedFlags.storageToRemove then
-        storageMenu:addOption("Remove Storage", worldObjects, function()
+        storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
             if luautils.walkAdj(playerObj, clickedFlags.storageToRemove:getSquare()) then
                 ISTimedActionQueue.add(JBRemoveStorageAction:new(playerObj, clickedFlags.storageToRemove, 50))
             end
         end)
     end
 
-    showMenu = true
+    --showMenu = true
 
     if showMenu then
         local loggingMenu
+        local menuName = getText("UI_JBLogging_Menu_Name")
         if keepOnTop then
-            loggingMenu = context:addOptionOnTop(getText("UI_JBLogging_Menu_Name"))
+            loggingMenu = context:addOptionOnTop(menuName)
         else
-            loggingMenu = context:insertOptionAfter(getText("ContextMenu_SitGround"), getText("UI_JBLogging_Menu_Name"),
-                worldObjects, nil)
+            loggingMenu = context:insertOptionAfter(getText("ContextMenu_SitGround"), menuName, worldObjects, nil)
         end
         context:addSubMenu(loggingMenu, subMenu)
     end

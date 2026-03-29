@@ -84,7 +84,6 @@ function GatherItemsAction:getAvailableContainers()
                         foundStorageOnSq = true
                     elseif obj:getContainer() and not foundStorageOnSq then
                         if not modData.JB_AutoLogStorage then
-                            --print("normal container")
                             table.insert(containers, obj:getContainer())
                         end
                     end
@@ -206,7 +205,7 @@ function GatherItemsAction:GetItemsOnSquare()
         local item = items:get(i)
         if instanceof(item, "IsoWorldInventoryObject") and self.itemTypes[item:getItem():getFullType()] then
             table.insert(self.currentItems, item)
-        -- check for shit like stones and stumps that are tiles
+        -- check for shit that are tiles
         elseif self.itemTypes[item:getProperty("CustomName")] then
             table.insert(self.currentItems, item)
         end
@@ -248,6 +247,7 @@ function GatherItemsAction:PickupItems()
         self:SetDestContainerByWeight(yieldType, weight)
     end
 
+
     --[[     if not self.destContainer or not self.destContainer:hasRoomFor(self.character, item:getItem()) then
         self:SetDestContainer(item)
     end ]]
@@ -277,17 +277,20 @@ function GatherItemsAction:PickupItems()
         return
     end
 
-    if self.character:getSquare() ~= self.currentSquare then
+    --[[ if self.character:getSquare() ~= self.currentSquare then
+        --print("walking...")
         local walkAction = ISWalkToTimedAction:new(self.character, self.currentSquare)
         ISTimedActionQueue.add(walkAction)
-    end
+    end ]]
 
-    if isTile then
-        ISTimedActionQueue.add(JB_GatherSpriteAction:new(self.character, item, yieldType, self.destContainer, 100))
-    else
-        local time = 50
-        local grabAction = grabWithDest(self.character, item, time, self.destContainer)
-        ISTimedActionQueue.add(grabAction)
+    if luautils.walkAdj(self.character, self.currentSquare, true) then
+        if isTile then
+            ISTimedActionQueue.add(JB_GatherSpriteAction:new(self.character, item, yieldType, self.destContainer, 100))
+        else
+            local time = 50
+            local grabAction = grabWithDest(self.character, item, time, self.destContainer)
+            ISTimedActionQueue.add(grabAction)
+        end
     end
 
     table.remove(self.currentItems, i)

@@ -42,7 +42,10 @@ JBLogging.GatherItemList = {
         ["Base.LargeStone"] = true,
         ["Base.Limestone"] = true,
         ["Base.Stone2"] = true,
-        --["Boulder"] = true,
+    },
+
+    Boulders = {
+        ["Boulder"] = true,
     },
 
     Stumps = {
@@ -71,8 +74,8 @@ JBLogging.pickupItems = {
     ["Limestone"] = "Limestone",
     ["Stump"] = "UnusableWood",
     ["Small Stump"] = "UnusableWood",
+    ["Tree Stump"] = "UnusableWood",
     ["Twigs"] = "Twigs",
     ["TreeBranch2"] = "TreeBranch2",
     ["Log"] = "Log",
-    --["Boulder"] = "LargeStone",
 }

@@ -7,16 +7,9 @@ end
 
 function JB_GatherSpriteAction:start()
     self.character:faceLocation(self.spriteObj:getX(), self.spriteObj:getY())
-    if self.itemType == "Base.UnusableWood" then
-        -- stumps
-        self:setActionAnim(CharacterActionAnims.Dig)
-    else
-        -- stones
-        self:setActionAnim("Loot")
-        self.character:SetVariable("LootPosition", "Low")
-        self:setOverrideHandModels(nil, nil)
-    end
-    
+    self:setActionAnim("Loot")
+    self.character:SetVariable("LootPosition", "Low")
+    self:setOverrideHandModels(nil, nil)
 end
 
 function JB_GatherSpriteAction:update()
@@ -48,12 +41,13 @@ end
 
 function JB_GatherSpriteAction:getDuration(time)
     if self.character:isTimedActionInstant() then
-        return 1
+        time = 1
     end
     return time or 50
 end
 
 function JB_GatherSpriteAction:new(character, spriteObj, itemType, destContainer, time)
+    -- self.character, item, yieldType, self.destContainer, 100
     local o = {}
     setmetatable(o, self)
     self.__index = self
