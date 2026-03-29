@@ -1,4 +1,9 @@
 {
+    "UI_JBLogging_Category_Gathering": "Gathering...",
+    "UI_JBLogging_Category_Clearing": "Clearing...",
+    "UI_JBLogging_Category_Processing": "Processing...",
+    "UI_JBLogging_Menu_Tooltip_Requires": "Requires",
+
     "UI_JBLogging_Menu_Quit": "Quit",
     "UI_JBLogging_Stack_Logs": "Stack Logs",
     "UI_JBLogging_Chop_Firewood": "Chop Firewood",
@@ -11,6 +16,7 @@
     "UI_JBLogging_Menu_Clear_Grass": "Cut Grass & Weeds",
     "UI_JBLogging_Menu_Clear_Grass_Hand": "Pull Grass & Weeds By Hand",
     "UI_JBLogging_Menu_Clear_Stumps": "Clear Tree Stumps",
+    "UI_JBLogging_Menu_Clear_Boulders": "Clear Boulders",
 
     "UI_JBLogging_Menu_Gather_Branches": "Gather Twigs and Branches",
     "UI_JBLogging_Menu_Saw_Planks": "Saw Logs Into Planks",
@@ -18,6 +24,26 @@
     "UI_JBLogging_Menu_Gather_Firewood": "Gather Firewood",
     "UI_JBLogging_Menu_Gather_Stones": "Gather Stones",
 
+    "UI_JBLogging_Menu_Req_Clear_Trees": "Axe and Tree",
+    "UI_JBLogging_Menu_Req_Clear_Stumps": "Hammer, Sledgehammer, Club Hammer, Pickaxe or Stone Maul and Tree Stump",
+    "UI_JBLogging_Menu_Req_Clear_Bushes": "Cutting Tool and Bush",
+    "UI_JBLogging_Menu_Req_Clear_Grass": "Grass or Weeds",
+    "UI_JBLogging_Menu_Req_Clear_Boulders": "Hammer, Sledgehammer, Club Hammer, Pickaxe or Stone Maul and Boulder",
+    "UI_JBLogging_Menu_Req_Saw_Planks": "Wood Saw and Log",
+    "UI_JBLogging_Menu_Req_Chop_Firewood": "Axe and Log",
+
+    "UI_JBLogging_Menu_Tooltip_Gather_Logs": "Automatically identifies and picks up wood logs in the selected area and moves them to your designated storage.",
+    "UI_JBLogging_Menu_Tooltip_Gather_Planks": "Searches the area for loose planks to gather and store.",
+    "UI_JBLogging_Menu_Tooltip_Gather_Firewood": "Collects all cut firewood from the ground and brings it to your firewood inventory or storage.",
+    "UI_JBLogging_Menu_Tooltip_Gather_Stones": "Scours the ground for loose stones and rocks, harvesting them into your bags.",
+    "UI_JBLogging_Menu_Tooltip_Gather_Branches": "Gathers twigs and branches from the ground, perfect for starting fires or crafting.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Trees": "Queues up the chopping of all trees in the selected area. Requires an axe.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Stumps": "Uses a tool to remove unsightly tree stumps. Requires a tool with the Remove Stump tag.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Bushes": "Clears out bushes and tall shrubbery using a cutting tool.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Grass": "Cuts down grass and weeds to clear the terrain.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Boulders": "Breaks apart large boulders into usable stones. Requires a pickaxe or sledgehammer.",
+    "UI_JBLogging_Menu_Tooltip_Saw_Planks": "Automatically processes gathered logs into planks using a saw.",
+    "UI_JBLogging_Menu_Tooltip_Chop_Firewood": "Splits logs into firewood for your wood-burning stoves and fireplaces.",
 
     "UI_JBLogging_Tree_Too_Far": "That's too far, I can't see",
     "UI_JBLogging_No_Tree": "I don't see a tree",
@@ -63,6 +89,7 @@
     "UI_JBLogging_LogStorage": "Log Storage",
     "UI_JBLogging_PlankStorage": "Plank Storage",
     "UI_JBLogging_ScrapWoodStorage": "Scrap Wood Storage",
-    "UI_JBLogging_FirewoodStorage": "Firewood Storage"
+    "UI_JBLogging_FirewoodStorage": "Firewood Storage",
+    "UI_JBLogging_Menu_RemoveStorage": "Remove Storage"
 
 }

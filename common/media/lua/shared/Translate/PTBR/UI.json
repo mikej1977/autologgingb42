@@ -1,4 +1,8 @@
 {
+    "UI_JBLogging_Category_Gathering": "Coleta...",
+    "UI_JBLogging_Category_Clearing": "Limpeza...",
+    "UI_JBLogging_Category_Processing": "Processamento...",
+    "UI_JBLogging_Menu_Tooltip_Requires": "Requer",
     "UI_JBLogging_Menu_Quit": "Sair",
     "UI_JBLogging_Stack_Logs": "Empilhar Troncos",
     "UI_JBLogging_Chop_Firewood": "Cortar Lenha",
@@ -11,16 +15,31 @@
     "UI_JBLogging_Menu_Clear_Grass": "Cortar Grama e Ervas Daninhas",
     "UI_JBLogging_Menu_Clear_Grass_Hand": "Arrancar Grama e Ervas Daninhas à Mão",
     "UI_JBLogging_Menu_Clear_Stumps": "Limpar Tocos de Árvore",
-
+    "UI_JBLogging_Menu_Clear_Boulders": "Limpar Rochas",
     "UI_JBLogging_Menu_Gather_Branches": "Coletar Gravetos e Galhos",
     "UI_JBLogging_Menu_Saw_Planks": "Serrar Troncos em Tábuas",
     "UI_JBLogging_Menu_Gather_Planks": "Coletar Tábuas",
     "UI_JBLogging_Menu_Gather_Firewood": "Coletar Lenha",
     "UI_JBLogging_Menu_Gather_Stones": "Coletar Pedras",
-
+    "UI_JBLogging_Menu_Tooltip_Gather_Logs": "Identifica e coleta automaticamente troncos de madeira na área selecionada e os move para o armazenamento designado.",
+    "UI_JBLogging_Menu_Tooltip_Gather_Planks": "Procura na área por tábuas soltas para coletar e armazenar.",
+    "UI_JBLogging_Menu_Tooltip_Gather_Firewood": "Coleta toda a lenha cortada do chão e a leva para o seu inventário ou armazenamento de lenha.",
+    "UI_JBLogging_Menu_Tooltip_Gather_Stones": "Vasculha o chão em busca de pedras soltas e rochas, coletando-as em suas bolsas.",
+    "UI_JBLogging_Menu_Tooltip_Gather_Branches": "Coleta gravetos e galhos do chão, perfeitos para acender fogueiras ou fabricação.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Trees": "Coloca na fila o corte de todas as árvores na área selecionada. Requer um machado.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Stumps": "Usa uma ferramenta para remover tocos de árvore desagradáveis. Requer uma ferramenta de remoção de tocos.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Bushes": "Limpa arbustos e vegetação alta usando uma ferramenta de corte.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Grass": "Corta grama e ervas daninhas para limpar o terreno.",
+    "UI_JBLogging_Menu_Tooltip_Clear_Boulders": "Quebra grandes rochas em pedras utilizáveis. Requer uma picareta ou marreta.",
+    "UI_JBLogging_Menu_Tooltip_Saw_Planks": "Processa automaticamente os troncos coletados em tábuas usando uma serra.",
+    "UI_JBLogging_Menu_Tooltip_Chop_Firewood": "Corta troncos em lenha para seus fogões a lenha e lareiras.",
+    "UI_JBLogging_Menu_Req_Clear_Trees": "Requer: Machado",
+    "UI_JBLogging_Menu_Req_Clear_Stumps": "Requer: Ferramenta de Remoção",
+    "UI_JBLogging_Menu_Req_Clear_Boulders": "Requer: Picareta ou Marreta",
+    "UI_JBLogging_Menu_Req_Saw_Planks": "Requer: Serra",
+    "UI_JBLogging_Menu_Req_Chop_Firewood": "Requer: Machado",
     "UI_JBLogging_Tree_Too_Far": "Está muito longe, não consigo ver",
     "UI_JBLogging_No_Tree": "Não vejo nenhuma árvore",
-
     "UI_JBLogging_UseAorAn_A": "um(a)",
     "UI_JBLogging_UseAorAn_An": "um(a)",
     "UI_JBLogging_americanholly": "Azevinho Americano",
@@ -34,7 +53,6 @@
     "UI_JBLogging_riverbirch": "Bétula de Rio",
     "UI_JBLogging_virginiapine": "Pinheiro da Virgínia",
     "UI_JBLogging_yellowwood": "Madeira Amarela",
-
     "UI_JBLogging_Ident_1": "Isso parece %s %s",
     "UI_JBLogging_Ident_2": "Meio que parece %s %s",
     "UI_JBLogging_Ident_3": "Isso é definitivamente %s %s",
@@ -45,9 +63,7 @@
     "UI_JBLogging_Ident_8": "Sem dúvida, isso é %s %s",
     "UI_JBLogging_Ident_9": "Claramente, isso é %s %s",
     "UI_JBLogging_Ident_10": "Sem sombra de dúvida, isso é %s %s",
-
     "UI_JBLogging_Say_Nope": "Agora não...",
-    
     "UI_JBLogging_ModOptions_Title": "Opções do Menu de Coleta Automática do JB",
     "UI_JBLogging_ModOptions_Desc1": "<H1><LEFT><ORANGE> Opções do Menu de Coleta Automática do JB",
     "UI_JBLogging_ModOptions_Desc2": "<SIZE:SMALL><LEFT>Simulador de Desmatamento",
@@ -57,10 +73,10 @@
     "UI_JBLogging_ModOptions_KeepMenuOnTop": "Mostrar Menu de Coleta no Topo",
     "UI_JBLogging_ModOptions_CursorOptions": "<H2><LEFT> Opções de Cursor",
     "UI_JBLogging_ModOptions_SelectColor": "Escolher Cor para o Contorno de Seleção",
-
     "UI_JBLogging_StorageMenuTitle": "Opções de Armazenamento...",
     "UI_JBLogging_LogStorage": "Armazenamento de Troncos",
     "UI_JBLogging_PlankStorage": "Armazenamento de Tábuas",
     "UI_JBLogging_ScrapWoodStorage": "Armazenamento de Restos de Madeira",
-    "UI_JBLogging_FirewoodStorage": "Armazenamento de Lenha"
+    "UI_JBLogging_FirewoodStorage": "Armazenamento de Lenha",
+    "UI_JBLogging_Menu_RemoveStorage": "Remover Armazenamento"
 }
