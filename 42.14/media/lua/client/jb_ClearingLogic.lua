@@ -134,7 +134,6 @@ JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
             end
 
             if boulderObj and config then
-                -- Equip tool if this boulder range requires it
                 if config.tool then
                     ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), predicateRemoveBoulder, true, true)
                 end
@@ -142,7 +141,6 @@ JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
                 JBLogging.ActionPlayer.addToQueue(
                     playerObj,
                     function(p, b, cfg)
-                        -- Walk to the boulder first to prevent "bugging out"
                         if luautils.walkAdj(p, b:getSquare()) then
                             ISTimedActionQueue.add(JB_ClearBoulderAction:new(p, b, cfg.tool, cfg.stones, cfg.time))
                         end

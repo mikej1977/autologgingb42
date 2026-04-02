@@ -84,8 +84,27 @@ JBLogging.Storage.Types = {
             level3north = "jb_autologging_26",
             level4north = "jb_autologging_27",
         },
-
     },
+
+    Stone = {
+        name = "Stone Storage",
+        itemType = JBLogging.GatherItemList.Stones,
+        sprites = {
+            empty = "jb_autologging_20",
+            cursor = "jb_autologging_22",
+            cursorNorth = "jb_autologging_22",
+
+            level1 = "jb_autologging_21",
+            level2 = "jb_autologging_21",
+            level3 = "jb_autologging_22",
+            level4 = "jb_autologging_23",
+
+            level1north = "jb_autologging_21",
+            level2north = "jb_autologging_21",
+            level3north = "jb_autologging_22",
+            level4north = "jb_autologging_23",
+        }
+    }
 }
 
 JBLogging.Storage.Create = function(playerObj, typeKey)

@@ -28,6 +28,10 @@ local function predicateCutPlant(item)
     return not item:isBroken() and item:hasTag(ItemTag.CUT_PLANT)
 end
 
+local function predicateDigStump(item)
+    return item:hasTag(ItemTag.REMOVE_STUMP)
+end
+
 local function predicateDigging(item)
     if item:isBroken() then return false end
     local type = item:getType()
@@ -50,6 +54,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     local hasCuttingTool = playerInv:containsEvalRecurse(predicateCutPlant)
     local hasWoodSaw = playerInv:containsEvalRecurse(predicateWoodSaw)
     local hasDiggingTool = playerInv:containsEvalRecurse(predicateDigging)
+    local hasStumpTool = playerInv:containsEvalRecurse(predicateDigStump)
     local clickedFlags = {
         tree = false,
         logs = false,
@@ -306,7 +311,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         },
         {
             category = "UI_JBLogging_Category_Clearing",
-            condition = axe and clickedFlags.stump,
+            condition = hasStumpTool and clickedFlags.stump,
             translate = "UI_JBLogging_Menu_Clear_Stumps",
             tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Stumps",
             reqTag = "UI_JBLogging_Menu_Req_Clear_Stumps",
@@ -408,10 +413,6 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Logs")
     end)
-
-    storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
-        JBLogging.Storage.Create(playerObj, "Logs")
-    end)
     storageMenu:addOption(getText("UI_JBLogging_PlankStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Planks")
     end)
@@ -421,7 +422,9 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     storageMenu:addOption(getText("UI_JBLogging_FirewoodStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Firewood")
     end)
-
+    storageMenu:addOption(getText("UI_JBLogging_StoneStorage"), worldObjects, function()
+        JBLogging.Storage.Create(playerObj, "Stone")
+    end)
     if clickedFlags.storageToRemove then
         storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
             if luautils.walkAdj(playerObj, clickedFlags.storageToRemove:getSquare()) then
@@ -443,7 +446,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         context:addSubMenu(loggingMenu, subMenu)
     end
 end
-
+ 
 Events.OnFillWorldObjectContextMenu.Add(JBLogging.doWorldContextMenu)
 
 return JBLogging

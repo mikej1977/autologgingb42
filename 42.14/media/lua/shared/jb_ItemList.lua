@@ -44,6 +44,10 @@ JBLogging.GatherItemList = {
         ["Base.Stone2"] = true,
     },
 
+    StoneStorage = {
+        ["Base.Stone2"] = true,
+    },
+
     Boulders = {
         ["Boulder"] = true,
     },
