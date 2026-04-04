@@ -1,0 +1,9 @@
+name=Auto Logging 42.16+ SP/MP
+id=JBLogging
+description=Auto Logging for 42.16+ MP & SP
+poster=poster.png
+icon=icon.png
+require=\JB_ASSUtils
+author=jimbeamdiablo
+pack=jb_autologging
+tiledef=jb_autologging 5555
