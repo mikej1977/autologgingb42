@@ -14,6 +14,7 @@ local function runScanners(registry, target, player, flags)
     end
 end
 
+--local function executeAction(worldObjects, optionAction, playerObj, clickedFlags)
 local function executeAction(worldObjects, optionAction, playerObj, clickedFlags)
     if type(optionAction) == "function" then
         optionAction(worldObjects, playerObj, clickedFlags)

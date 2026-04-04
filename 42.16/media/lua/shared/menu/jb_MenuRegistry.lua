@@ -1,5 +1,8 @@
 JBLogging = JBLogging or {}
 require("menu/jb_RegisterMenuOptions")
+require("jb_ClearingLogic")
+require("jb_ProcessingLogic")
+require("jb_GatheringLogic")
 local JB_ASSUtils = require("JB_ASSUtils")
 
 JBLogging.GetSquare = function(worldObjs, playerObj, logicFunc, ...)
@@ -8,8 +11,8 @@ JBLogging.GetSquare = function(worldObjs, playerObj, logicFunc, ...)
 end
 
 JBLogging.GetArea = function(worldObjs, playerObj, logicFunc, ...)
-    local args = { ... }
-    JB_ASSUtils.SelectArea(worldObjs, playerObj, logicFunc, unpack(args))
+    --local args = { ... }
+    JB_ASSUtils.SelectArea(worldObjs, playerObj, logicFunc, ...)
 end
 
 JBLogging.GetSquareAndArea = function(worldObjs, playerObj, logicFunc, ...)
