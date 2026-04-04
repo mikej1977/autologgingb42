@@ -15,16 +15,16 @@ JBLogging.Scanners = {
 --- @param type string 'Square', 'Object', 'WorldObject', 'Recipe' or 'Environment'
 --- @param id unique ID for this scanner in case you don't like mine
 --- @param func function "function(data, playerObj, clickedFlags)"
-function JBLogging.registerScanner(type, id, func)
-    if not JBLogging.Scanners[type] then
-        print("ERROR: JBLogging - Invalid scanner type: " .. tostring(type))
+function JBLogging.registerScanner(cat, id, func)
+    if not JBLogging.Scanners[cat] then
+        print("ERROR: JBLogging - Invalid scanner type: " .. tostring(cat))
         return
     end
     if type(func) ~= "function" then
         print("ERROR: JBLogging - Scanner '" .. id .. "' must provide a function.")
         return
     end
-    JBLogging.Scanners[type][id] = func
+    JBLogging.Scanners[cat][id] = func
 end
 
 -- PREMADE SCANNERS FOR YOUR PLEASURE

@@ -3,6 +3,8 @@
 JBLogging = JBLogging or {}
 JBLogging.MenuOptions = JBLogging.MenuOptions or {}
 require("jb_ModOptions")
+require("menu/jb_Scanner")
+require("menu/jb_MenuRegistry")
 local JB_ASSUtils = require("JB_ASSUtils")
 
 local function runScanners(registry, target, player, flags)
@@ -12,7 +14,7 @@ local function runScanners(registry, target, player, flags)
     end
 end
 
-local function executeAction(optionAction, worldObjects, playerObj, clickedFlags)
+local function executeAction(worldObjects, optionAction, playerObj, clickedFlags)
     if type(optionAction) == "function" then
         optionAction(worldObjects, playerObj, clickedFlags)
     elseif type(optionAction) == "table" then
@@ -55,14 +57,14 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     local subMenu = ISContextMenu:getNew(context)
 
     local clickedFlags = {}
-    runScanners(JBLogging.Scanners.ToolCheck, playerObj, playerObj, clickedFlags)
+    runScanners(JBLogging.Scanners.ToolCheck, playerObj, nil, clickedFlags)
 
-    local function processSquare(square, playerObj, clickedFlags)
-        runScanners(JBLogging.Scanners.Square, square, playerObj, clickedFlags)
+    local function processSquare(sq, pl, cf)
+        runScanners(JBLogging.Scanners.Square, sq, pl, cf)
 
         local objects = {}
-        local obs = square:getObjects()
-        local wobs = square:getWorldObjects()
+        local obs = sq:getObjects()
+        local wobs = sq:getWorldObjects()
 
         for i = 0, obs:size() - 1 do table.insert(objects, {obj = obs:get(i), type = "Object"}) end
         for i = 0, wobs:size() - 1 do table.insert(objects, {obj = wobs:get(i), type = "WorldObject"}) end
@@ -71,12 +73,12 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
             local ent = entry.obj
             
             if entry.type == "Object" then
-                runScanners(JBLogging.Scanners.Object, ent, playerObj, clickedFlags)
+                runScanners(JBLogging.Scanners.Object, ent, pl, cf)
             else
-                runScanners(JBLogging.Scanners.WorldObject, ent, playerObj, clickedFlags)
-                runScanners(JBLogging.Scanners.Recipe, ent, playerObj, clickedFlags)
+                runScanners(JBLogging.Scanners.WorldObject, ent, pl, cf)
+                runScanners(JBLogging.Scanners.Recipe, ent, pl, cf)
             end
-            runScanners(JBLogging.Scanners.Environment, ent, playerObj, clickedFlags)
+            runScanners(JBLogging.Scanners.Environment, ent, pl, cf)
         end
     end
 
@@ -106,7 +108,9 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     for _, option in ipairs(JBLogging.MenuOptions) do
         if option.condition(playerInv, clickedFlags) or alwaysShowMenu then
             local catMenu = getCategoryMenu(option.category)
-            local newOption = catMenu:addOption(getText(option.translate), worldObjects, option.action, playerObj)
+            
+            local newOption = catMenu:addOption(getText(option.translate), worldObjects, executeAction, option.action, playerObj, clickedFlags)
+            
             if option.tooltip then
                 local tooltip = ISWorldObjectContextMenu.addToolTip()
                 tooltip:setName(getText(option.translate))

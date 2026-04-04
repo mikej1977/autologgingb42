@@ -1,5 +1,4 @@
 -- jb_Predicates.lua
-
 JBLogging = JBLogging or {}
 
 JBLogging.Predicates = {

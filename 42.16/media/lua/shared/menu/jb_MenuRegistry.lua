@@ -1,10 +1,10 @@
 JBLogging = JBLogging or {}
-require("jb_RegisterMenuOptions")
+require("menu/jb_RegisterMenuOptions")
 local JB_ASSUtils = require("JB_ASSUtils")
 
 JBLogging.GetSquare = function(worldObjs, playerObj, logicFunc, ...)
-    local args = { ... }
-    JB_ASSUtils.SelectSingleSquare(worldObjs, playerObj, ...)
+    local args = {...}
+    JB_ASSUtils.SelectSingleSquare(worldObjs, playerObj, logicFunc, unpack(args))
 end
 
 JBLogging.GetArea = function(worldObjs, playerObj, logicFunc, ...)
@@ -130,7 +130,7 @@ JBLogging.registerMenuOption({
     translate = "UI_JBLogging_Menu_Saw_Planks",
     tooltip = "UI_JBLogging_Menu_Tooltip_Saw_Planks",
     reqTag = "UI_JBLogging_Menu_Req_Saw_Planks",
-    action = { JBLogging.GetArea, JBLogging.unifiedProcess, "flags.recipeSawLogs" },
+    action = { JBLogging.GetArea, JBLogging.unifiedProcess, "recipeSawLogs" },
 })
 
 JBLogging.registerMenuOption({
@@ -141,5 +141,5 @@ JBLogging.registerMenuOption({
     translate = "UI_JBLogging_Chop_Firewood",
     tooltip = "UI_JBLogging_Menu_Tooltip_Chop_Firewood",
     reqTag = "UI_JBLogging_Menu_Req_Chop_Firewood",
-    action = { JBLogging.GetArea, JBLogging.unifiedProcess, "flags.recipeChopFirewood" },
+    action = { JBLogging.GetArea, JBLogging.unifiedProcess, "recipeChopFirewood" },
 })
