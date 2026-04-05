@@ -150,7 +150,6 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
     if not container then
         --local contTranslationName = "UI_JBLogging_" .. getText(typeKey .. "Storage")
         local containerName = typeKey .. "Storage"
-        print(containerName)
         container = ItemContainer.new(containerName, square, storageObj)
         storageObj:setContainer(container)
     end

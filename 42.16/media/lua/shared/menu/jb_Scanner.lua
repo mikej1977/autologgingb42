@@ -121,8 +121,20 @@ JBLogging.registerScanner("Object", "jb_hasLog2", function(obj, player, flags)
     end
 end)
 
+JBLogging.registerScanner("Object", "jb_hasStone2", function(obj, player, flags)
+    if flags.hasStone then return end
+    local sprite = obj:getSprite()
+    local props = sprite and sprite:getProperties()
+    local customName = props:has("CustomName") and props:get("CustomName") or nil
+    if customName and JBLogging.GatherItemList.Stones[customName] then
+        flags.hasStone = true
+    end
+end)
+
 JBLogging.registerScanner("Object", "jb_hasAutoStorage", function(obj, player, flags)
     if flags.hasAutoStorage then return end
+    if obj:getSquare() ~= flags.clickedSquare then return end
+
     if obj:getModData() and obj:getModData().JB_AutoLogStorage then
         flags.squareAutoStorage = obj:getSquare()
         flags.objAutoStorage = obj

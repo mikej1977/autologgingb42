@@ -22,6 +22,7 @@ JBLogging.GatherItemList = {
         ["Base.Twigs"] = true,
         ["Base.Splinters"] = true,
         ["Twigs"] = true,
+        ["StoneTwigs"] = true,
         ["TreeBranch2"] = true,
         ["Base.UnusableWood"] = true,
     },

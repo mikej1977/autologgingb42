@@ -6,14 +6,14 @@ function JB_GatherSpriteAction:isValid()
 end
 
 function JB_GatherSpriteAction:start()
-    self.character:faceLocation(self.spriteObj:getX(), self.spriteObj:getY())
+    self.character:faceThisObject(self.spriteObj)
     self:setActionAnim("Loot")
     self.character:SetVariable("LootPosition", "Low")
     self:setOverrideHandModels(nil, nil)
 end
 
 function JB_GatherSpriteAction:update()
-    self.character:faceLocation(self.spriteObj:getX(), self.spriteObj:getY())
+    --self.character:faceThisObject(self.spriteObj)
 end
 
 function JB_GatherSpriteAction:complete()

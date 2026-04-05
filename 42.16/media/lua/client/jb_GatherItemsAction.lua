@@ -309,9 +309,9 @@ function GatherItemsAction:PickupItems()
         --print("walking...")
         local walkAction = ISWalkToTimedAction:new(self.character, self.currentSquare)
         ISTimedActionQueue.add(walkAction)
-    end ]]
+    end
 
---[[     if luautils.walkAdj(self.character, self.currentSquare, true) then
+    if luautils.walkAdj(self.character, self.currentSquare, true) then
         if isTile then
             ISTimedActionQueue.add(JB_GatherSpriteAction:new(self.character, item, yieldType, self.destContainer, 100))
         else
@@ -332,7 +332,7 @@ function GatherItemsAction:PickupItems()
     }
 
     walk:setOnComplete(function(data)
-        if not data.itemFullType then return end
+        --if not data.itemFullType then return end
         if data.tileFlag then
             ISTimedActionQueue.add(JB_GatherSpriteAction:new(data.char, data.itemObj, data.itemFullType, data.dest, 100))
         else
