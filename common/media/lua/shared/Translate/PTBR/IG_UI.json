@@ -1,6 +1,6 @@
 {
-    "IGUI_ContainerTitle_Logs_Storage": "Armazenamento de Troncos",
-    "IGUI_ContainerTitle_Planks_Storage": "Armazenamento de Tábuas",
-    "IGUI_ContainerTitle_Twigs_Storage": "Armazenamento de Gravetos e Galhos",
-    "IGUI_ContainerTitle_Firewood_Storage": "Armazenamento de Lenha"
+    "IGUI_ContainerTitle_LogsStorage": "Armazenamento de Troncos",
+    "IGUI_ContainerTitle_PlanksStorage": "Armazenamento de Tábuas",
+    "IGUI_ContainerTitle_TwigsStorage": "Armazenamento de Gravetos e Galhos",
+    "IGUI_ContainerTitle_FirewoodStorage": "Armazenamento de Lenha"
 }

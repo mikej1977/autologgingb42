@@ -86,10 +86,12 @@
     "UI_JBLogging_ModOptions_SelectColor": "Choose Color For Selection Outline",
 
     "UI_JBLogging_StorageMenuTitle": "Storage Options...",
+    
     "UI_JBLogging_LogStorage": "Log Storage",
-    "UI_JBLogging_PlankStorage": "Plank Storage",
+    "UI_JBLogging_PlanksStorage": "Plank Storage",
     "UI_JBLogging_ScrapWoodStorage": "Scrap Wood Storage",
     "UI_JBLogging_FirewoodStorage": "Firewood Storage",
+    "UI_JBLogging_StoneStorage": "Stone Storage",
     "UI_JBLogging_Menu_RemoveStorage": "Remove Storage"
 
 }

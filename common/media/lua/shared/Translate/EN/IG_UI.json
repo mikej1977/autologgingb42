@@ -1,6 +1,7 @@
 {
-    "IGUI_ContainerTitle_Logs_Storage": "Logs Storage",
-    "IGUI_ContainerTitle_Planks_Storage": "Planks Storage",
-    "IGUI_ContainerTitle_Twigs_Storage": "Twigs & Branches Storage",
-    "IGUI_ContainerTitle_Firewood_Storage": "Firewood Storage"
+    "IGUI_ContainerTitle_LogsStorage": "Logs Storage",
+    "IGUI_ContainerTitle_PlanksStorage": "Planks Storage",
+    "IGUI_ContainerTitle_TwigsStorage": "Twigs & Branches Storage",
+    "IGUI_ContainerTitle_FirewoodStorage": "Firewood Storage",
+    "IGUI_ContainerTitle_StoneStorage": "Stone Storage"
 }
