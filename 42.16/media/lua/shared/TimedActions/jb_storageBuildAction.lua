@@ -8,10 +8,11 @@ function JB_BuildAction:isValid()
 end
 
 function JB_BuildAction:update()
-    self.character:faceLocation(self.square:getX(), self.square:getY())
+    --self.character:faceLocation(self.square:getX(), self.square:getY())
 end
 
 function JB_BuildAction:start()
+    self.character:faceLocation(self.square:getX(), self.square:getY())
     self:setActionAnim("Loot")
     self.character:SetVariable("LootPosition", "Low")
 end

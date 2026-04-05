@@ -54,6 +54,7 @@ function GatherItemsAction:GetFirstValidDrop(destinations)
     end
     return nil, nil
 end
+
 function GatherItemsAction:getStorageType()
     if not self.itemTypes then return nil end
 
@@ -215,7 +216,6 @@ function GatherItemsAction:GetNextSquare()
     end
 
     self.currentSquare = nil
-
 end
 
 function GatherItemsAction:GetItemsOnSquare()
@@ -233,7 +233,7 @@ function GatherItemsAction:GetItemsOnSquare()
         local item = items:get(i)
         if instanceof(item, "IsoWorldInventoryObject") and self.itemTypes[item:getItem():getFullType()] then
             table.insert(self.currentItems, item)
-        -- check for shit that are tiles
+            -- check for shit that are tiles
         elseif self.itemTypes[item:getProperty("CustomName")] then
             table.insert(self.currentItems, item)
         end
@@ -305,7 +305,7 @@ function GatherItemsAction:PickupItems()
         return
     end
 
---[[     if self.character:getSquare() ~= self.currentSquare then
+    --[[     if self.character:getSquare() ~= self.currentSquare then
         --print("walking...")
         local walkAction = ISWalkToTimedAction:new(self.character, self.currentSquare)
         ISTimedActionQueue.add(walkAction)
@@ -339,11 +339,13 @@ function GatherItemsAction:PickupItems()
             ISTimedActionQueue.add(grabWithDest(data.char, data.itemObj, 50, data.dest))
         end
     end, completionData)
+
     ISTimedActionQueue.add(walk)
 
     table.remove(self.currentItems, i)
     return
 end
+
 function GatherItemsAction:SetDestContainer(item)
     if self.destContainer and self.destContainer:hasRoomFor(self.character, item:getItem()) then
         return
@@ -377,9 +379,8 @@ function GatherItemsAction:SetDestContainerByWeight(type, weight)
             return
         end
     end
-    
-    self.destContainer = nil
 
+    self.destContainer = nil
 end
 
 function GatherItemsAction:DropOffItems()
@@ -396,8 +397,14 @@ function GatherItemsAction:DropOffItems()
 
     local actionsQueued = 0
     local BATCH_LIMIT = 20
-
     local scheduledSquare = self.character:getSquare()
+
+    -- Track the future weight of containers
+    local projectedWeights = {}
+    for _, c in ipairs(destinations) do
+        local actual = instanceof(c, "VehiclePart") and c:getItemContainer() or c
+        projectedWeights[actual] = actual:getCapacityWeight()
+    end
 
     for _, playerContainer in ipairs(playerContainers) do
         for itemType in pairs(self.itemTypes) do
@@ -409,21 +416,27 @@ function GatherItemsAction:DropOffItems()
 
                     local dropItem = dropItems:get(i)
                     local droppedToContainer = false
+                    local itemWeight = dropItem:getActualWeight()
 
                     for _, container in ipairs(destinations) do
-                        
                         local targetVehiclePart = nil
+                        local actualContainer = container
+
                         if instanceof(container, "VehiclePart") then
-                            container = container:getItemContainer()
-                            targetVehiclePart = container
+                            actualContainer = container:getItemContainer()
+                            targetVehiclePart = actualContainer
                         end
 
-                        if container:hasRoomFor(self.character, dropItem:getActualWeight()) then
-                            local containerObj = container:getParent()
+                        -- Check if it fits the PROJECTED weight
+                        if actualContainer:getCapacity() >= (projectedWeights[actualContainer] + itemWeight) then
+                            -- Add the item's weight to our future projection
+                            projectedWeights[actualContainer] = projectedWeights[actualContainer] + itemWeight
+
+                            local containerObj = actualContainer:getParent()
                             local destSquare = containerObj and containerObj:getSquare() or self.dropSquare
 
                             self.dropSquare = destSquare
-                            
+
                             if scheduledSquare ~= destSquare then
                                 if targetVehiclePart then
                                     if not walkToVehiclePartArea(self.character, targetVehiclePart) then return end
@@ -434,14 +447,17 @@ function GatherItemsAction:DropOffItems()
                             end
 
                             ISTimedActionQueue.add(ISInventoryTransferAction:new(self.character, dropItem,
-                                dropItem:getContainer(), container, 50))
+                                dropItem:getContainer(), actualContainer, 50))
 
                             if containerObj and containerObj:getModData() and containerObj:getModData().JB_AutoLogStorage then
                                 local updateAction = ISBaseTimedAction:new(self.character)
+                                updateAction.Type = "UpdateStorageSprite"
                                 updateAction.maxTime = 1
-                                updateAction.perform = function()
+                                updateAction.isValid = function(self) return true end
+
+                                updateAction.perform = function(self)
                                     JBLogging.Storage.UpdateSprite(containerObj)
-                                    ISBaseTimedAction.perform(updateAction)
+                                    ISBaseTimedAction.perform(self)
                                 end
                                 ISTimedActionQueue.add(updateAction)
                             end
@@ -488,6 +504,7 @@ end
 
 function GatherItemsAction:End()
     self.resetGameSpeed = true
+    self.character:setHaloNote("", 0)
     if self.OnTick then
         ISTimedActionQueue.clear(self.character)
         Events.OnTick.Remove(self.OnTick)
@@ -495,6 +512,8 @@ function GatherItemsAction:End()
 end
 
 function GatherItemsAction:Update()
+    self.tickCounter = 0
+
     local function OnTick()
         Events.OnTick.Remove(self.OnTick)
 
@@ -510,8 +529,25 @@ function GatherItemsAction:Update()
 
         if self:IsDoingSomething() then
             self.actionDelay = 5
+
+            self.tickCounter = 0
+
+            self.character:setHaloNote("", 0)
             Events.OnTick.Add(self.OnTick)
             return
+        end
+
+        self.tickCounter = self.tickCounter + 1
+
+        if self.tickCounter > 10 then
+            local cycle = self.tickCounter % 30
+            local dots = "."
+            if cycle >= 20 then
+                dots = "..."
+            elseif cycle >= 10 then
+                dots = ".."
+            end
+            self.character:setHaloNote(dots, 255, 255, 255, 11)
         end
 
         if self.actionDelay > 0 then

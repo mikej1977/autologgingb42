@@ -8,9 +8,9 @@ end
 
 local function predicateRemoveBoulder(item)
     if item:isBroken() then return false end
-    local type = item:getType()
+    --local type = item:getType()
     return item:hasTag(ItemTag.HAMMER) or item:hasTag(ItemTag.SLEDGEHAMMER) or item:hasTag(ItemTag.CLUB_HAMMER) or
-        item:hasTag(ItemTag.PICK_AXE) or type == "PickAxe" or item:hasTag(ItemTag.STONE_MAUL)
+        item:hasTag(ItemTag.PICK_AXE) or item:getType() == "PickAxe" or item:hasTag(ItemTag.STONE_MAUL)
 end
 
 local boulderConfig = {

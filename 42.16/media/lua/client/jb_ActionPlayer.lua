@@ -1,6 +1,6 @@
 -- jb_ActionPlayer.lua
 JBLogging = JBLogging or {}
-require("jb_ActionRegistry")
+require("jb_ActionRegistry") -- what is this?
 JBLogging.ActionPlayer = {}
 local ActionSpeedKeeper = require("jb_SpeedKeeper")
 
@@ -25,7 +25,6 @@ function JBLogging.ActionPlayer.addToQueue(playerObj, func, args)
         JBLogging.ActionPlayer.start(playerObj)
     end
 end
-
 
 function JBLogging.ActionPlayer.start(playerObj)
     local pNum = playerObj:getPlayerNum()

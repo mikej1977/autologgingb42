@@ -94,9 +94,13 @@ end)
 JBLogging.registerScanner("Object", "jb_hasBoulder", function(obj, player, flags)
     if flags.hasBoulder then return end
     local sprite = obj:getSprite()
+    local spriteName = sprite:getName()
+    local nameBeginsWith = spriteName and luautils.stringStarts(spriteName, "boulder")
     local props = sprite and sprite:getProperties()
     local customName = props:has("CustomName") and props:get("CustomName") or nil
     if customName and JBLogging.GatherItemList.Boulders[customName] then
+        flags.hasBoulder = true
+    elseif nameBeginsWith then
         flags.hasBoulder = true
     end
 end)
