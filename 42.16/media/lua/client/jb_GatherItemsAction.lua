@@ -305,13 +305,13 @@ function GatherItemsAction:PickupItems()
         return
     end
 
-    --[[ if self.character:getSquare() ~= self.currentSquare then
+--[[     if self.character:getSquare() ~= self.currentSquare then
         --print("walking...")
         local walkAction = ISWalkToTimedAction:new(self.character, self.currentSquare)
         ISTimedActionQueue.add(walkAction)
     end ]]
 
-    --[[ if luautils.walkAdj(self.character, self.currentSquare, true) then
+--[[     if luautils.walkAdj(self.character, self.currentSquare, true) then
         if isTile then
             ISTimedActionQueue.add(JB_GatherSpriteAction:new(self.character, item, yieldType, self.destContainer, 100))
         else
@@ -323,13 +323,22 @@ function GatherItemsAction:PickupItems()
 
     local walk = ISWalkToTimedAction:new(self.character, self.currentSquare)
 
-    walk:setOnComplete(function(char, itemObj, type, dest, tileFlag)
-        if tileFlag then
-            ISTimedActionQueue.add(JB_GatherSpriteAction:new(char, itemObj, type, dest, 100))
+    local completionData = {
+        char = self.character,
+        itemObj = item,
+        itemFullType = yieldType,
+        dest = self.destContainer,
+        tileFlag = isTile
+    }
+
+    walk:setOnComplete(function(data)
+        if not data.itemFullType then return end
+        if data.tileFlag then
+            ISTimedActionQueue.add(JB_GatherSpriteAction:new(data.char, data.itemObj, data.itemFullType, data.dest, 100))
         else
-            ISTimedActionQueue.add(grabWithDest(char, itemObj, 50, dest))
+            ISTimedActionQueue.add(grabWithDest(data.char, data.itemObj, 50, data.dest))
         end
-    end, self.character, item, yieldType, self.destContainer, isTile)
+    end, completionData)
     ISTimedActionQueue.add(walk)
 
     table.remove(self.currentItems, i)
