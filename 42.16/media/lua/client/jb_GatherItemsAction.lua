@@ -399,7 +399,6 @@ function GatherItemsAction:DropOffItems()
     local BATCH_LIMIT = 20
     local scheduledSquare = self.character:getSquare()
 
-    -- Track the future weight of containers
     local projectedWeights = {}
     for _, c in ipairs(destinations) do
         local actual = instanceof(c, "VehiclePart") and c:getItemContainer() or c
@@ -427,9 +426,7 @@ function GatherItemsAction:DropOffItems()
                             targetVehiclePart = actualContainer
                         end
 
-                        -- Check if it fits the PROJECTED weight
                         if actualContainer:getCapacity() >= (projectedWeights[actualContainer] + itemWeight) then
-                            -- Add the item's weight to our future projection
                             projectedWeights[actualContainer] = projectedWeights[actualContainer] + itemWeight
 
                             local containerObj = actualContainer:getParent()
