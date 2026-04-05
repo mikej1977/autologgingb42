@@ -209,7 +209,7 @@ end)
 JBLogging.registerScanner("Recipe", "jb_canChopFirewood", function(wobj, player, flags)
     if flags.recipeChopFirewood then return end
     local item = wobj:getItem()
-    if not (instanceof(item, "InventoryItem") and JBLogging.GatherItemList.Firewood[item:getFullType()]) then
+    if not (instanceof(item, "InventoryItem") and JBLogging.GatherItemList.Logs[item:getFullType()]) then
         return
     end
     flags.recipeChopFirewood = getRecipe("Base.Firewood", item, player)

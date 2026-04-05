@@ -45,7 +45,7 @@ JBLogging.GatherItemList = {
         ["Base.Stone2"] = true,
     },
 
-    StoneStorage = {
+    StonesStorage = {
         ["Base.Stone2"] = true,
     },
 

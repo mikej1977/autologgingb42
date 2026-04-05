@@ -117,7 +117,7 @@ JBLogging.registerMenuOption({
     translate = "UI_JBLogging_Menu_Saw_Planks",
     tooltip = "UI_JBLogging_Menu_Tooltip_Saw_Planks",
     reqTag = "UI_JBLogging_Menu_Req_Saw_Planks",
-    action = { "SelectArea", "unifiedProcess", "recipeSawLogs" },
+    action = { "SelectArea", "unifiedProcess", "recipeSawPlanks" },
 })
 
 JBLogging.registerMenuOption({

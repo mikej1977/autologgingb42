@@ -147,7 +147,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         JBLogging.Storage.Create(playerObj, "Firewood")
     end)
     storageMenu:addOption(getText("UI_JBLogging_StoneStorage"), worldObjects, function()
-        JBLogging.Storage.Create(playerObj, "Stone")
+        JBLogging.Storage.Create(playerObj, "Stones")
     end)
     
     if clickedFlags.hasAutoStorage then

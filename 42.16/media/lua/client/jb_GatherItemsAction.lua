@@ -57,7 +57,6 @@ end
 
 function GatherItemsAction:getStorageType()
     if not self.itemTypes then return nil end
-
     for typeKey, data in pairs(JBLogging.Storage.Types) do
         for itemFullType, _ in pairs(self.itemTypes) do
             if type(data.itemType) == "table" and data.itemType[itemFullType] then

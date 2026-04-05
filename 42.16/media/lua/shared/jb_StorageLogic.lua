@@ -86,7 +86,7 @@ JBLogging.Storage.Types = {
         },
     },
 
-    Stone = {
+    Stones = {
         name = "Stone Storage",
         itemType = JBLogging.GatherItemList.Stones,
         sprites = {
