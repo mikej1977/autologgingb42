@@ -2,7 +2,11 @@ require "Definitions/ContainerButtonIcons"
 
 do
     local textures = {
-        log_storage = "jb_autologging_1",
+        LogsStorage = "media/ui/ContainerIcons/container_icon_LogStorage.png",
+        PlanksStorage = "jb_autologging_13",
+        TwigsStorage = "jb_autologging_17",
+        FirewoodStorage = "jb_autologging_25",
+        StoneStorage = "jb_autologging_21"
     }
 
     for key, path in pairs(textures) do
@@ -23,5 +27,9 @@ local function addValuesToPropertyMap(propertyName, values)
 end
 
 Events.OnInitWorld.Add(function()
-    addValuesToPropertyMap("container", { "log_storage" })
+    addValuesToPropertyMap("container", { "LogsStorage" })
+    addValuesToPropertyMap("container", { "PlanksStorage" })
+    addValuesToPropertyMap("container", { "TwigsStorage" })
+    addValuesToPropertyMap("container", { "FirewoodStorage" })
+    addValuesToPropertyMap("container", { "StoneStorage" })
 end)

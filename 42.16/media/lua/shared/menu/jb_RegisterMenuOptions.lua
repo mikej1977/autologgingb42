@@ -3,7 +3,7 @@ JBLogging = JBLogging or {}
 JBLogging.MenuOptions = JBLogging.MenuOptions or {}
 
 
---- register a new menu option in to the Auto Logging context menu
+--- register a new menu option in the Auto Logging context menu
 --- @param option table
 function JBLogging.registerMenuOption(option)
     if type(option) ~= "table" then

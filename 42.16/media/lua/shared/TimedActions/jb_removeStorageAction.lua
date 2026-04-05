@@ -31,11 +31,11 @@ function JBRemoveStorageAction:perform()
     triggerEvent("OnContainerUpdate")
 end
 
-function JBRemoveStorageAction:getDuration()
+function JBRemoveStorageAction:getDuration(time)
     if self.character:isTimedActionInstant() then
         return 1
     end
-    return 50
+    return time or 50
 end
 
 function JBRemoveStorageAction:new(character, storageObj, time)
@@ -46,7 +46,7 @@ function JBRemoveStorageAction:new(character, storageObj, time)
     o.storageObj = storageObj
     o.stopOnWalk = true
     o.stopOnRun = true
-    o.maxTime = time or 50
+    o.maxTime = o:getDuration(time)
     if o.character:isTimedActionInstant() then o.maxTime = 1 end
 
     return o

@@ -111,7 +111,7 @@ JBLogging.registerScanner("Object", "jb_hasStump", function(obj, player, flags)
     end
 end)
 
-JBLogging.registerScanner("Object", "jb_hasLog", function(obj, player, flags)
+JBLogging.registerScanner("Object", "jb_hasLog2", function(obj, player, flags)
     if flags.hasLog then return end
     local sprite = obj:getSprite()
     local props = sprite and sprite:getProperties()
@@ -124,10 +124,21 @@ end)
 JBLogging.registerScanner("Object", "jb_hasAutoStorage", function(obj, player, flags)
     if flags.hasAutoStorage then return end
     if obj:getModData() and obj:getModData().JB_AutoLogStorage then
+        flags.squareAutoStorage = obj:getSquare()
+        flags.objAutoStorage = obj
         flags.hasAutoStorage = true
     end
 end)
 
+JBLogging.registerScanner("Object", "jb_hasTwig2", function(obj, player, flags)
+    if flags.hasTwig then return end
+    local sprite = obj:getSprite()
+    local props = sprite and sprite:getProperties()
+    local customName = props:has("CustomName") and props:get("CustomName") or nil
+    if customName and JBLogging.GatherItemList.Twigs[customName] then
+        flags.hasTwig = true
+    end
+end)
 JBLogging.registerScanner("WorldObject", "jb_hasTwig", function(wobj, player, flags)
     if flags.hasTwig then return end
     if JBLogging.GatherItemList.Twigs[wobj:getItem():getFullType()] then

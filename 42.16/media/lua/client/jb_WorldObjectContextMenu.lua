@@ -3,6 +3,7 @@
 JBLogging = JBLogging or {}
 JBLogging.MenuOptions = JBLogging.MenuOptions or {}
 require("jb_ModOptions")
+require("jb_StorageLogic")
 require("menu/jb_Scanner")
 require("menu/jb_MenuRegistry")
 local JB_ASSUtils = require("JB_ASSUtils")
@@ -83,6 +84,8 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     end
 
     local sq = worldObjects[1]:getSquare()
+    clickedFlags.clickedSquare = sq
+
     for dx = -1, 1 do
         for dy = -1, 1 do
             local square = getSquare(sq:getX() + dx, sq:getY() + dy, sq:getZ())
@@ -149,8 +152,8 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     
     if clickedFlags.hasAutoStorage then
         storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
-            if luautils.walkAdj(playerObj, clickedFlags.storageToRemove:getSquare()) then
-                ISTimedActionQueue.add(JBRemoveStorageAction:new(playerObj, clickedFlags.storageToRemove, 50))
+            if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
+                ISTimedActionQueue.add(JBRemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage, 50))
             end
         end)
     end

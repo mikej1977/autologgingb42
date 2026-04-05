@@ -28,7 +28,12 @@ function JB_BuildAction:stop()
 end
 
 function JB_BuildAction:perform()
-    if isClient() then
+
+    ISBaseTimedAction.perform(self)
+end
+
+function JB_BuildAction:complete()
+if isClient() then
         local args = {
             x = self.square:getX(),
             y = self.square:getY(),
@@ -48,8 +53,6 @@ function JB_BuildAction:perform()
             self.buildObjName
         )
     end
-
-    ISBaseTimedAction.perform(self)
     triggerEvent("OnContainerUpdate")
 end
 

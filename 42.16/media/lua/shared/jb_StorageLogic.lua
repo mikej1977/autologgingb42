@@ -148,8 +148,10 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
 
     local container = storageObj:getContainer()
     if not container then
-        local contName = "UI_JBLogging_" .. getText(typeKey .. "Storage")
-        container = ItemContainer.new(contName, square, storageObj)
+        --local contTranslationName = "UI_JBLogging_" .. getText(typeKey .. "Storage")
+        local containerName = typeKey .. "Storage"
+        print(containerName)
+        container = ItemContainer.new(containerName, square, storageObj)
         storageObj:setContainer(container)
     end
     container:setExplored(true)
