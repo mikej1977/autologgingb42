@@ -1,3 +1,0 @@
-RecipesEN = {
-    JB_ChopLog = "Chop Firewood",
-}
