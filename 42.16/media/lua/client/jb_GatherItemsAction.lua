@@ -1,6 +1,6 @@
 -- jb_GatherItemsAction.lua
-local ActionSpeedKeeper = require("jb_SpeedKeeper")
-require("jb_StorageLogic")
+local ActionSpeedKeeper = require("helpers/jb_SpeedKeeper")
+require("logic/jb_StorageLogic")
 
 GatherItemsAction = {}
 GatherItemsAction.__index = GatherItemsAction
@@ -55,25 +55,6 @@ function GatherItemsAction:GetFirstValidDrop(destinations)
     return nil, nil
 end
 
-function GatherItemsAction:getStorageType()
-    if self.storageType then
-        return self.storageType
-    end
-    return nil
-
-    --[[ if not self.itemTypes then return nil end
-    for typeKey, data in pairs(JBLogging.Storage.Types) do
-        for itemFullType, _ in pairs(self.itemTypes) do
-            if type(data.itemType) == "table" and data.itemType[itemFullType] then
-                return typeKey
-            elseif type(data.itemType) == "string" and data.itemType == itemFullType then
-                return typeKey
-            end
-        end
-    end
-    return nil ]]
-end
-
 function GatherItemsAction:getAvailableContainers()
     local containers = {}
     local startSquare = self.dropSquare
@@ -90,11 +71,7 @@ function GatherItemsAction:getAvailableContainers()
         end
     end
 
-    local storageType = self:getStorageType()
-
-    print(storageType)
-
-    if storageType then
+    --if self.storageType then
         local visited = {}
         local queue = { startSquare }
 
@@ -114,7 +91,7 @@ function GatherItemsAction:getAvailableContainers()
                     local obj = objs:get(i)
                     local modData = obj:getModData()
 
-                    if modData and modData.JB_AutoLogStorage == storageType then --obj:getContainer() then
+                    if modData and modData.JB_AutoLogStorage == self.storageType then
                         table.insert(containers, obj:getContainer())
                         foundStorageOnSq = true
                     elseif obj:getContainer() and not foundStorageOnSq then
@@ -144,7 +121,7 @@ function GatherItemsAction:getAvailableContainers()
                 end
             end
         end
-    end
+    --end
 
     return containers
 end
@@ -234,13 +211,10 @@ function GatherItemsAction:GetItemsOnSquare()
     local items = self.currentSquare:getObjects()
     if items:size() == 0 then return end
 
-    -- ScriptManager.instance:getItem(item:getProperty("CustomName"))
-
     for i = 0, items:size() - 1 do
         local item = items:get(i)
         if instanceof(item, "IsoWorldInventoryObject") and self.itemTypes[item:getItem():getFullType()] then
             table.insert(self.currentItems, item)
-            -- check for shit that are tiles
         elseif self.itemTypes[item:getProperty("CustomName")] then
             table.insert(self.currentItems, item)
         end
@@ -282,11 +256,6 @@ function GatherItemsAction:PickupItems()
         self:SetDestContainerByWeight(yieldType, weight)
     end
 
-
-    --[[     if not self.destContainer or not self.destContainer:hasRoomFor(self.character, item:getItem()) then
-        self:SetDestContainer(item)
-    end ]]
-
     if not self.destContainer then
         local hasFreeSpace = false
         local playerContainers = getPlayerContainers(self.character)
@@ -312,22 +281,6 @@ function GatherItemsAction:PickupItems()
         return
     end
 
-    --[[     if self.character:getSquare() ~= self.currentSquare then
-        --print("walking...")
-        local walkAction = ISWalkToTimedAction:new(self.character, self.currentSquare)
-        ISTimedActionQueue.add(walkAction)
-    end
-
-    if luautils.walkAdj(self.character, self.currentSquare, true) then
-        if isTile then
-            ISTimedActionQueue.add(JB_GatherSpriteAction:new(self.character, item, yieldType, self.destContainer, 100))
-        else
-            local time = 50
-            local grabAction = grabWithDest(self.character, item, time, self.destContainer)
-            ISTimedActionQueue.add(grabAction)
-        end
-    end ]]
-
     local walk = ISWalkToTimedAction:new(self.character, self.currentSquare)
 
     local completionData = {
@@ -339,7 +292,6 @@ function GatherItemsAction:PickupItems()
     }
 
     walk:setOnComplete(function(data)
-        --if not data.itemFullType then return end
         if data.tileFlag then
             ISTimedActionQueue.add(JB_GatherSpriteAction:new(data.char, data.itemObj, data.itemFullType, data.dest, 100))
         else

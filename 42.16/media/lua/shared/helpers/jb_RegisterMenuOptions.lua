@@ -1,7 +1,18 @@
 -- jb_RegisterMenuOptions.lua
 JBLogging = JBLogging or {}
 JBLogging.MenuOptions = JBLogging.MenuOptions or {}
+JBLogging.MenuCategories = JBLogging.MenuCategories or {}
 
+--- Register a new context menu category
+--- @param id string Identifier (e.g., "Gathering")
+--- @param translationKey string Translation key for the UI (e.g., "UI_JBLogging_Category_Gathering")
+function JBLogging.registerMenuCategory(id, translationKey)
+    if type(id) ~= "string" or type(translationKey) ~= "string" then
+        print("ERROR: JBLogging.registerMenuCategory - 'id' and 'translationKey' must both be strings.")
+        return
+    end
+    JBLogging.MenuCategories[id] = translationKey
+end
 
 --- register a new menu option in the Auto Logging context menu
 --- @param option table
@@ -19,10 +30,16 @@ function JBLogging.registerMenuOption(option)
 
     for field, expectedType in pairs(requiredFields) do
         if type(option[field]) ~= expectedType then
-            print(string.format("ERROR: JBLogging.registerMenuOption - Missing or invalid field '%s' (expected %s, got %s)", 
+            print(string.format(
+                "ERROR: JBLogging.registerMenuOption - Missing or invalid field '%s' (expected %s, got %s)",
                 field, expectedType, type(option[field])))
             return false
         end
+    end
+
+    if not JBLogging.MenuCategories[option.category] then
+        print("WARNING: JBLogging - Category '" ..
+        tostring(option.category) .. "' is not registered in JBLogging.MenuCategories.")
     end
 
     if option.tooltip and type(option.tooltip) ~= "string" then

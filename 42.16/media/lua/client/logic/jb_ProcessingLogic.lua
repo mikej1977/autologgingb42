@@ -1,6 +1,6 @@
 -- jb_ProcessingLogic.lua
 JBLogging = JBLogging or {}
-local ActionSpeedKeeper = require("JB_SpeedKeeper")
+local ActionSpeedKeeper = require("helpers/JB_SpeedKeeper")
 
 JBLogging.unifiedProcess = function(playerObj, worldObjects, selectedArea, recipe)
     if not (selectedArea and selectedArea.squares and recipe) then return end

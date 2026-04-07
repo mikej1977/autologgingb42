@@ -1,11 +1,11 @@
 JBLogging = JBLogging or {}
 require("menu/jb_RegisterMenuOptions")
-require("jb_ClearingLogic")
-require("jb_ProcessingLogic")
-require("jb_GatheringLogic")
+require("logic/jb_ClearingLogic")
+require("logic/jb_ProcessingLogic")
+require("logic/jb_GatheringLogic")
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Gathering", -- this should be a registry also
+    category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasLog
     end,
@@ -15,7 +15,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Gathering",
+    category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasPlank
     end,
@@ -25,7 +25,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Gathering",
+    category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasFirewood
     end,
@@ -35,7 +35,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Gathering",
+    category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasStone
     end,
@@ -45,7 +45,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Gathering",
+    category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasTwig
     end,
@@ -55,7 +55,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Clearing",
+    category = "Clearing",
     condition = function(playerInv, flags)
         return flags.toolChopTree and flags.hasTree
     end,
@@ -66,7 +66,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Clearing",
+    category = "Clearing",
     condition = function(playerInv, flags)
         return flags.toolDigStump and flags.hasStump
     end,
@@ -77,7 +77,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Clearing",
+    category = "Clearing",
     condition = function(playerInv, flags)
         return flags.toolCutPlant and flags.hasBush
     end,
@@ -88,7 +88,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Clearing",
+    category = "Clearing",
     condition = function(playerInv, flags)
         return flags.hasGrass
     end,
@@ -99,7 +99,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Clearing",
+    category = "Clearing",
     condition = function(playerInv, flags)
         return flags.toolBreakBoulder and flags.hasBoulder
     end,
@@ -110,7 +110,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Processing",
+    category = "Processing",
     condition = function(playerInv, flags)
         return flags.recipeSawPlanks and flags.hasLog
     end,
@@ -121,7 +121,7 @@ JBLogging.registerMenuOption({
 })
 
 JBLogging.registerMenuOption({
-    category = "UI_JBLogging_Category_Processing",
+    category = "Processing",
     condition = function(playerInv, flags)
         return flags.recipeChopFirewood and flags.toolWoodSaw
     end,

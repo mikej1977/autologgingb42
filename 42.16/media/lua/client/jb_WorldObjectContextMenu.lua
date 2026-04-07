@@ -3,9 +3,9 @@
 JBLogging = JBLogging or {}
 JBLogging.MenuOptions = JBLogging.MenuOptions or {}
 require("jb_ModOptions")
-require("jb_StorageLogic")
+require("logic/jb_StorageLogic")
 require("menu/jb_Scanner")
-require("menu/jb_MenuRegistry")
+require("registries/jb_MenuRegistry")
 local JB_ASSUtils = require("JB_ASSUtils")
 
 local function runScanners(registry, target, player, flags)
@@ -100,7 +100,9 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
 
     local function getCategoryMenu(catKey)
         if not categoryMenus[catKey] then
-            local catOption = subMenu:addOption(getText(catKey), worldObjects, nil)
+            local translationStr = JBLogging.MenuCategories[catKey] or catKey
+
+            local catOption = subMenu:addOption(getText(translationStr), worldObjects, nil)
             local newSub = ISContextMenu:getNew(subMenu)
             context:addSubMenu(catOption, newSub)
             categoryMenus[catKey] = newSub
@@ -132,7 +134,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         end
     end
 
-    local storageMenu = getCategoryMenu("UI_JBLogging_StorageMenuTitle")
+    local storageMenu = getCategoryMenu("Storage")
 
     storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
         JBLogging.Storage.Create(playerObj, "Logs")

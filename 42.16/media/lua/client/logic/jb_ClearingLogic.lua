@@ -1,6 +1,6 @@
 -- jb_ClearingLogic.lua
 JBLogging = JBLogging or {}
-require("jb_ActionPlayer")
+require("helpers/jb_ActionPlayer")
 
 local function predicateRemoveStump(item)
     return not item:isBroken() and item:hasTag(ItemTag.REMOVE_STUMP)

@@ -1,6 +1,6 @@
 -- jb_StorageLogic.lua
-require("jb_ItemList")
-require("jb_storageBuildCursor")
+require("registries/jb_ItemList")
+require("cursors/jb_StorageBuildCursor")
 
 JBLogging.Storage.Create = function(playerObj, typeKey)
     local data = JBLogging.Storage.Types[typeKey]

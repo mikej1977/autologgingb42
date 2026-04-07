@@ -1,4 +1,5 @@
 -- jb_containerRegistry.lua
+require("registries/jb_ItemList")
 
 JBLogging = JBLogging or {}
 JBLogging.Storage = {}
@@ -6,7 +7,6 @@ JBLogging.Storage = {}
 JBLogging.Storage.Types = {
     Logs = {
         name = "Log Storage",
-
         itemType = JBLogging.GatherItemList.Logs,
         sprites = {
             empty = "jb_autologging_20",
