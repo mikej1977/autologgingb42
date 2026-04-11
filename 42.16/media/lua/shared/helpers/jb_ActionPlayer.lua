@@ -69,7 +69,7 @@ function ActionPlayer.clear(playerObj)
         q.isActive = false
         q.tasks = {}
         if q.speedKeeper then
-            q.speedKeeper:RestoreSpeed()
+            q.speedKeeper:resetGameSpeed()
             q.speedKeeper = nil
         end
         if q.ticker then
@@ -78,5 +78,4 @@ function ActionPlayer.clear(playerObj)
         end
     end
 end
-
 return ActionPlayer

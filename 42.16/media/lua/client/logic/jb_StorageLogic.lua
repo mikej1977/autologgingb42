@@ -3,7 +3,7 @@ local ItemList = require("registries/jb_ItemList")
 local ContainerRegistry = require("registries/jb_ContainerRegistry")
 require("cursors/jb_StorageBuildCursor")
 
--- PZ setAcceptItemFunction has to reference a global string path?
+-- PZ setAcceptItemFunction has to reference a global string path
 JBLogging = JBLogging or {}
 JBLogging.Storage = JBLogging.Storage or {}
 
@@ -138,8 +138,10 @@ StorageLogic.UpdateSprite = function(object)
             object:sendObjectChange(IsoObjectChange.SPRITE)
             object:transmitUpdatedSpriteToClients()
         end
+
+        -- MOVED INSIDE THE IF STATEMENT to prevent a game-freezing infinite loop!
+        triggerEvent("OnContainerUpdate")
     end
-    triggerEvent("OnContainerUpdate")
 end
 
 StorageLogic.CheckSquare = function(square)
