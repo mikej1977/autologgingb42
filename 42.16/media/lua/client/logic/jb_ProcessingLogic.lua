@@ -1,24 +1,42 @@
 -- jb_ProcessingLogic.lua
 local ItemList = require("registries/jb_ItemList")
-local ActionSpeedKeeper = require("helpers/JB_SpeedKeeper")
+local ActionSpeedKeeper = require("helpers/jb_SpeedKeeper")
 
 local ProcessingLogic = {}
 
-ProcessingLogic.unifiedProcess = function(playerObj, worldObjects, selectedArea, recipe)
-    if not (selectedArea and selectedArea.squares and recipe) then return end
+ProcessingLogic.unifiedProcess = function(playerObj, worldObjects, selectedArea, recipe, processCategory)
+    if not (selectedArea and selectedArea.squares and recipe and processCategory) then return end
+
+    local processItems = ItemList.ProcessList[processCategory]
+    if not processItems then
+        print("JBLogging: Process category '" .. tostring(processCategory) .. "' not found in ProcessList!")
+        return
+    end
 
     local actionSpeedKeeper = ActionSpeedKeeper:new(playerObj)
     actionSpeedKeeper:KeepSpeed()
 
     local function dropResults()
-        local dropItems = playerObj:getInventory():getItemsFromFullType("Base.Plank")
-        if dropItems:size() > 0 then
-            for i = 0, dropItems:size() - 1 do
-                local dropItem = dropItems:get(i)
+        local inv = playerObj:getInventory()
+        local itemsToDrop = {}
+
+        if ItemList.DropItems then
+            for itemFullType, _ in pairs(ItemList.DropItems) do
+                local items = inv:getItemsFromFullType(itemFullType)
+                if items and not items:isEmpty() then
+                    for i = 0, items:size() - 1 do
+                        table.insert(itemsToDrop, items:get(i))
+                    end
+                end
+            end
+        end
+
+        if #itemsToDrop > 0 then
+            for _, dropItem in ipairs(itemsToDrop) do
                 local dropX, dropY, dropZ = ISTransferAction.GetDropItemOffset(playerObj, playerObj:getSquare(), dropItem)
                 playerObj:getCurrentSquare():AddWorldInventoryItem(dropItem, dropX, dropY, dropZ):getWorldItem()
                     :transmitCompleteItemToClients()
-                playerObj:getInventory():Remove(dropItem)
+                inv:Remove(dropItem)
             end
             ISInventoryPage.renderDirty = true
         end
@@ -39,9 +57,9 @@ ProcessingLogic.unifiedProcess = function(playerObj, worldObjects, selectedArea,
         local objList = square:getObjects()
         for i = 0, objList:size() - 1 do
             local obj = objList:get(i)
-            if instanceof(obj, "IsoWorldInventoryObject") and ItemList.ProcessList.SawLogs[obj:getItem():getFullType()] then
+
+            if instanceof(obj, "IsoWorldInventoryObject") and processItems[obj:getItem():getFullType()] then
                 if luautils.walkAdj(playerObj, obj:getSquare(), true) then
-                    --ISTimedActionQueue.add(ISHandcraftAction:new(playerObj, recipe, containers, obj))
                     ISInventoryPaneContextMenu.OnNewCraft(obj:getItem(), recipe, playerObj:getPlayerNum(), true)
                 end
             end

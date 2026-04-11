@@ -169,7 +169,7 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
     if clickedFlags.hasAutoStorage then
         storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
             if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
-                ISTimedActionQueue.add(JBRemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage, 50))
+                ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage, 50))
             end
         end)
     end

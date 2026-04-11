@@ -1,21 +1,11 @@
--- drop that wood on the ground please
+-- jb_ActionAddOrDrop.lua
 local OG_addOrDropShit = Actions.addOrDropItem
-
+local ItemList = require("registries/jb_ItemList")
 function Actions.addOrDropItem(character, item)
     
 -- should pull in from dropItem registry    
-local logTypes = {
-        ["JB_Big_Wood.SmallLog"] = true,
-        ["Base.Log"] = true,
-        ["JB_Big_Wood.LargeLog"] = true,
-        ["JB_Big_Wood.VeryLargeLog"] = true,
-        ["Base.Splinters"] = true,
-        ["Base.UnusableWood"] = true,
-        ["Base.Firewood"] = true,
-        ["Base.Plank"] = true
-    }
 
-    if not logTypes[item:getFullType()] then
+    if not ItemList.DropItems[item:getFullType()] then
         OG_addOrDropShit(character, item)
         return
     end

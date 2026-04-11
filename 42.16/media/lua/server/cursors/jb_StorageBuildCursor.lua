@@ -9,7 +9,7 @@ function JB_StorageBuildCursor:create(x, y, z, north, sprite)
     local playerObj = self.character
 
     local time = 20
-    ISTimedActionQueue.add(JB_BuildAction:new(self.character, square, self.sprite, self.north, self.typeKey))
+    ISTimedActionQueue.add(JB_StorageBuildAction:new(self.character, square, self.sprite, self.north, self.typeKey))
 end
 
 function JB_StorageBuildCursor:isValid(square)

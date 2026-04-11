@@ -1,6 +1,7 @@
 -- jb_JB_GatherItemsAction.lua
 local ActionSpeedKeeper = require("helpers/jb_SpeedKeeper")
-require("logic/jb_StorageLogic")
+local ItemList = require("registries/jb_ItemList")
+local StorageLogic = require("logic/jb_StorageLogic")
 
 JB_GatherItemsAction = {}
 JB_GatherItemsAction.__index = JB_GatherItemsAction
@@ -72,55 +73,55 @@ function JB_GatherItemsAction:getAvailableContainers()
     end
 
     --if self.storageType then
-        local visited = {}
-        local queue = { startSquare }
+    local visited = {}
+    local queue = { startSquare }
 
-        local function getSqKey(sq) return sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ() end
+    local function getSqKey(sq) return sq:getX() .. "," .. sq:getY() .. "," .. sq:getZ() end
 
-        while #queue > 0 do
-            local foundStorageOnSq = false
-            local currentSq = table.remove(queue, 1)
-            local key = getSqKey(currentSq)
+    while #queue > 0 do
+        local foundStorageOnSq = false
+        local currentSq = table.remove(queue, 1)
+        local key = getSqKey(currentSq)
 
-            if not visited[key] then
-                visited[key] = true
+        if not visited[key] then
+            visited[key] = true
 
-                local objs = currentSq:getObjects()
+            local objs = currentSq:getObjects()
 
-                for i = 0, objs:size() - 1 do
-                    local obj = objs:get(i)
-                    local modData = obj:getModData()
+            for i = 0, objs:size() - 1 do
+                local obj = objs:get(i)
+                local modData = obj:getModData()
 
-                    if modData and modData.JB_AutoLogStorage == self.storageType then
+                if modData and modData.JB_AutoLogStorage == self.storageType then
+                    table.insert(containers, obj:getContainer())
+                    foundStorageOnSq = true
+                elseif obj:getContainer() and not foundStorageOnSq then
+                    if not modData.JB_AutoLogStorage then
                         table.insert(containers, obj:getContainer())
-                        foundStorageOnSq = true
-                    elseif obj:getContainer() and not foundStorageOnSq then
-                        if not modData.JB_AutoLogStorage then
-                            table.insert(containers, obj:getContainer())
-                        end
                     end
                 end
+            end
 
-                if foundStorageOnSq and currentSq == startSquare then
-                    local x, y, z = currentSq:getX(), currentSq:getY(), currentSq:getZ()
-                    local cell = getCell()
+            if foundStorageOnSq and currentSq == startSquare then
+                local x, y, z = currentSq:getX(), currentSq:getY(), currentSq:getZ()
+                local cell = getCell()
 
-                    -- use square:getSurroundingSquares() array?
-                    local neighbors = {
-                        cell:getGridSquare(x, y - 1, z), -- N
-                        cell:getGridSquare(x, y + 1, z), -- S
-                        cell:getGridSquare(x + 1, y, z), -- E
-                        cell:getGridSquare(x - 1, y, z)  -- W
-                    }
+                -- use square:getSurroundingSquares() array?
+                local neighbors = {
+                    cell:getGridSquare(x, y - 1, z),     -- N
+                    cell:getGridSquare(x, y + 1, z),     -- S
+                    cell:getGridSquare(x + 1, y, z),     -- E
+                    cell:getGridSquare(x - 1, y, z)      -- W
+                }
 
-                    for _, neighbor in ipairs(neighbors) do
-                        if neighbor and not visited[getSqKey(neighbor)] then
-                            table.insert(queue, neighbor)
-                        end
+                for _, neighbor in ipairs(neighbors) do
+                    if neighbor and not visited[getSqKey(neighbor)] then
+                        table.insert(queue, neighbor)
                     end
                 end
             end
         end
+    end
     --end
 
     return containers
@@ -243,7 +244,7 @@ function JB_GatherItemsAction:PickupItems()
     local weight = 0
 
     if isTile then
-        yieldType = JBLogging.PickupItems[customName]
+        yieldType = ItemList.PickupItems[customName]
         if not yieldType:find("%.") then yieldType = "Base." .. yieldType end
         local scriptItem = ScriptManager.instance:getItem(yieldType)
         weight = scriptItem and scriptItem:getActualWeight() or 1.0
@@ -412,7 +413,7 @@ function JB_GatherItemsAction:DropOffItems()
                                 updateAction.isValid = function(self) return true end
 
                                 updateAction.perform = function(self)
-                                    JBLogging.Storage.UpdateSprite(containerObj)
+                                    StorageLogic.UpdateSprite(containerObj)
                                     ISBaseTimedAction.perform(self)
                                 end
                                 ISTimedActionQueue.add(updateAction)

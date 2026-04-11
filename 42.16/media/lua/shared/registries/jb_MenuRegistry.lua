@@ -117,7 +117,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Menu_Saw_Planks",
     tooltip = "UI_JBLogging_Menu_Tooltip_Saw_Planks",
     reqTag = "UI_JBLogging_Menu_Req_Saw_Planks",
-    action = { "SelectArea", "unifiedProcess", "recipeSawPlanks" },
+    action = { "SelectArea", "unifiedProcess", "recipeSawPlanks", "SawLogs" },
 })
 
 MenuOptions.registerMenuOption({
@@ -128,7 +128,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Chop_Firewood",
     tooltip = "UI_JBLogging_Menu_Tooltip_Chop_Firewood",
     reqTag = "UI_JBLogging_Menu_Req_Chop_Firewood",
-    action = { "SelectArea", "unifiedProcess", "recipeChopFirewood" },
+    action = { "SelectArea", "unifiedProcess", "recipeChopFirewood", "ChopFirewood" },
 })
 
 return MenuOptions

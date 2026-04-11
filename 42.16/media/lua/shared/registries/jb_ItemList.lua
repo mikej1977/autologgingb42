@@ -93,4 +93,15 @@ ItemList.BoulderConfig = {
     { min = 52, max = 59, tool = true,  time = 200, stones = 3 },
 }
 
+ItemList.DropItems = {
+    ["JB_Big_Wood.SmallLog"] = true,
+    ["Base.Log"] = true,
+    ["JB_Big_Wood.LargeLog"] = true,
+    ["JB_Big_Wood.VeryLargeLog"] = true,
+    ["Base.Splinters"] = true,
+    ["Base.UnusableWood"] = true,
+    ["Base.Firewood"] = true,
+    ["Base.Plank"] = true
+}
+
 return ItemList

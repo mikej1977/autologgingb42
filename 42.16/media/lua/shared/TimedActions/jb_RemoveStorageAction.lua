@@ -1,25 +1,25 @@
 require "TimedActions/ISBaseTimedAction"
 
-JBRemoveStorageAction = ISBaseTimedAction:derive("JBRemoveStorageAction")
+JB_RemoveStorageAction = ISBaseTimedAction:derive("JB_RemoveStorageAction")
 
-function JBRemoveStorageAction:isValid()
+function JB_RemoveStorageAction:isValid()
     return self.storageObj ~= nil and self.storageObj:getSquare() ~= nil
 end
 
-function JBRemoveStorageAction:update()
+function JB_RemoveStorageAction:update()
     self.character:faceLocation(self.storageObj:getSquare():getX(), self.storageObj:getSquare():getY())
 end
 
-function JBRemoveStorageAction:start()
+function JB_RemoveStorageAction:start()
     self:setActionAnim("Loot")
     self.character:SetVariable("LootPosition", "Low")
 end
 
-function JBRemoveStorageAction:stop()
+function JB_RemoveStorageAction:stop()
     ISBaseTimedAction.stop(self)
 end
 
-function JBRemoveStorageAction:perform()
+function JB_RemoveStorageAction:perform()
     local square = self.storageObj:getSquare()
 
     if isClient() then
@@ -31,14 +31,14 @@ function JBRemoveStorageAction:perform()
     triggerEvent("OnContainerUpdate")
 end
 
-function JBRemoveStorageAction:getDuration(time)
+function JB_RemoveStorageAction:getDuration(time)
     if self.character:isTimedActionInstant() then
         return 1
     end
     return time or 50
 end
 
-function JBRemoveStorageAction:new(character, storageObj, time)
+function JB_RemoveStorageAction:new(character, storageObj, time)
     local o = {}
     setmetatable(o, self)
     self.__index = self
