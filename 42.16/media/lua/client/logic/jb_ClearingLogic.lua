@@ -1,19 +1,10 @@
 -- jb_ClearingLogic.lua
-JBLogging = JBLogging or {}
-require("helpers/jb_ActionPlayer")
+local ItemList = require("registries/jb_ItemList")
+local Predicates = require("helpers/jb_Predicates")
+local ActionPlayer = require("helpers/jb_ActionPlayer")
 
-local function predicateRemoveStump(item)
-    return not item:isBroken() and item:hasTag(ItemTag.REMOVE_STUMP)
-end
-
-local function predicateRemoveBoulder(item)
-    if item:isBroken() then return false end
-    --local type = item:getType()
-    return item:hasTag(ItemTag.HAMMER) or item:hasTag(ItemTag.SLEDGEHAMMER) or item:hasTag(ItemTag.CLUB_HAMMER) or
-        item:hasTag(ItemTag.PICK_AXE) or item:getType() == "PickAxe" or item:hasTag(ItemTag.STONE_MAUL)
-end
-
-local boulderConfig = JBLogging.BoulderConfig 
+local ClearingLogic = {}
+local boulderConfig = ItemList.BoulderConfig
 
 local function getBoulderData(obj)
     local sprite = obj:getSprite()
@@ -62,7 +53,7 @@ local function isValidForClear(square, clearType)
             local props = sprite and sprite:getProperties()
             local customName = props and props:has("CustomName") and props:get("CustomName") or nil
             if customName then
-                if JBLogging.GatherItemList.Stumps[customName] then
+                if ItemList.GatherItemList.Stumps[customName] then
                     return true
                 end
             end
@@ -77,7 +68,7 @@ local function isValidForClear(square, clearType)
     end
 end
 
-JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
+ClearingLogic.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
     if not selectedArea or not selectedArea.squares then return end
 
     local validSquares = {}
@@ -128,10 +119,12 @@ JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
 
             if boulderObj and config then
                 if config.tool then
-                    ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), predicateRemoveBoulder, true, true)
+                    -- Replaced local function with Predicates.Digging
+                    ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), Predicates.Digging, true,
+                        true)
                 end
 
-                JBLogging.ActionPlayer.addToQueue(
+                ActionPlayer.addToQueue(
                     playerObj,
                     function(p, b, cfg)
                         if luautils.walkAdj(p, b:getSquare()) then
@@ -142,19 +135,19 @@ JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
                 )
             end
         elseif clearType == "Tree" then
-            JBLogging.ActionPlayer.addToQueue(
+            ActionPlayer.addToQueue(
                 playerObj,
                 ISWorldObjectContextMenu.doChopTree,
                 { playerObj, square:getTree() }
             )
         elseif clearType == "Grass" then
-            JBLogging.ActionPlayer.addToQueue(
+            ActionPlayer.addToQueue(
                 playerObj,
                 ISWorldObjectContextMenu.doRemoveGrass,
                 { playerObj, square }
             )
         elseif clearType == "Bush" then
-            JBLogging.ActionPlayer.addToQueue(
+            ActionPlayer.addToQueue(
                 playerObj,
                 ISWorldObjectContextMenu.doRemovePlant,
                 { playerObj, square, false }
@@ -169,10 +162,10 @@ JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
                 end
             end
             if stumpObj then
-                local digTool = JBLogging.Predicates.DigStump
-                ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), digTool, true, true)
-                --ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), predicateRemoveStump, true, true)
-                JBLogging.ActionPlayer.addToQueue(
+                -- Replaced local function with Predicates.DigStump
+                ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), Predicates.DigStump, true, true)
+
+                ActionPlayer.addToQueue(
                     playerObj,
                     function(p, s)
                         if luautils.walkAdj(p, s:getSquare()) then
@@ -185,3 +178,5 @@ JBLogging.unifiedClear = function(playerObj, worldObjs, selectedArea, clearType)
         end
     end
 end
+
+return ClearingLogic

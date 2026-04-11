@@ -1,61 +1,66 @@
 -- jb_GatheringLogic.lua
+local ItemList = require("registries/jb_ItemList")
 
-JBLogging.gatherLogs = function(playerObj, _worldObjects, stagingSquare, selectedSquares)
+local GatheringLogic = {}
+
+GatheringLogic.gatherLogs = function(playerObj, _worldObjects, stagingSquare, selectedSquares)
     if not selectedSquares or not selectedSquares.squares then return end
 
     JB_GatherItemsAction:new(
         playerObj,
         stagingSquare,
         selectedSquares,
-        JBLogging.GatherItemList.Logs,
+        ItemList.GatherItemList.Logs,
         "Logs"
     )
 end
 
-JBLogging.gatherTwigsAndBranches = function(playerObj, worldObjects, selectedSquare, selectedArea)
+GatheringLogic.gatherTwigsAndBranches = function(playerObj, worldObjects, selectedSquare, selectedArea)
     if not selectedArea then return end
 
     JB_GatherItemsAction:new(
         playerObj,
         selectedSquare,
         selectedArea,
-        JBLogging.GatherItemList.Twigs,
+        ItemList.GatherItemList.Twigs,
         "Twigs"
     )
 end
 
-JBLogging.gatherPlanks = function(playerObj, worldObjects, selectedSquare, selectedArea)
+GatheringLogic.gatherPlanks = function(playerObj, worldObjects, selectedSquare, selectedArea)
     if not selectedSquare or not selectedArea then return end
 
     JB_GatherItemsAction:new(
         playerObj,
         selectedSquare,
         selectedArea,
-        JBLogging.GatherItemList.Planks,
+        ItemList.GatherItemList.Planks,
         "Planks"
     )
 end
 
-JBLogging.gatherFirewood = function(playerObj, worldObjects, selectedSquare, selectedArea)
+GatheringLogic.gatherFirewood = function(playerObj, worldObjects, selectedSquare, selectedArea)
     if not selectedSquare or not selectedArea then return end
 
     JB_GatherItemsAction:new(
         playerObj,
         selectedSquare,
         selectedArea,
-        JBLogging.GatherItemList.Firewood,
+        ItemList.GatherItemList.Firewood,
         "Firewood"
     )
 end
 
-JBLogging.gatherStones = function(playerObj, worldObjects, selectedSquare, selectedArea)
+GatheringLogic.gatherStones = function(playerObj, worldObjects, selectedSquare, selectedArea)
     if not selectedSquare or not selectedArea then return end
 
     JB_GatherItemsAction:new(
         playerObj,
         selectedSquare,
         selectedArea,
-        JBLogging.GatherItemList.Stones,
+        ItemList.GatherItemList.Stones,
         "Stones"
-    )    
+    )
 end
+
+return GatheringLogic
