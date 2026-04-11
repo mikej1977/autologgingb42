@@ -1,12 +1,14 @@
 -- jb_WorldObjectContextMenu.lua
-
-JBLogging = JBLogging or {}
-JBLogging.MenuOptions = JBLogging.MenuOptions or {}
-require("jb_ModOptions")
-require("logic/jb_StorageLogic")
-require("menu/jb_Scanner")
-require("registries/jb_MenuRegistry")
+local RegisterOptions = require("helpers/jb_RegisterMenuOptions")
+local StorageLogic = require("logic/jb_StorageLogic")
+local Scanner = require("menu/jb_Scanner")
 local JB_ASSUtils = require("JB_ASSUtils")
+
+local LogicModules = {
+    require("logic/jb_ClearingLogic"),
+    require("logic/jb_GatheringLogic"),
+    require("logic/jb_ProcessingLogic")
+}
 
 local function runScanners(registry, target, player, flags)
     if not registry then return end
@@ -19,10 +21,21 @@ local function executeAction(worldObjects, optionAction, playerObj, clickedFlags
     if type(optionAction) ~= "table" then return end
 
     local utilName = optionAction[1]
-    local utilityFunc = JB_ASSUtils[utilName] --or JBLogging[utilName]...
+    local utilityFunc = JB_ASSUtils[utilName]
 
     local logicName = optionAction[2]
-    local logicFunc = JBLogging[logicName]
+    local logicFunc = nil
+
+    for _, mod in ipairs(LogicModules) do
+        if type(mod) == "table" and mod[logicName] then
+            logicFunc = mod[logicName]
+            break
+        end
+    end
+
+    if not logicFunc and JBLogging and type(JBLogging[logicName]) == "function" then
+        logicFunc = JBLogging[logicName]
+    end
 
     local params = {}
     for i = 3, #optionAction do
@@ -34,10 +47,14 @@ local function executeAction(worldObjects, optionAction, playerObj, clickedFlags
         end
     end
 
-    utilityFunc(worldObjects, playerObj, logicFunc, unpack(params))
+    if utilityFunc and logicFunc then
+        utilityFunc(worldObjects, playerObj, logicFunc, unpack(params))
+    else
+        print("ERROR: JBLogging - Could not find utility or logic function for: " .. tostring(logicName))
+    end
 end
 
-JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test)
+local function doWorldContextMenu(playerIndex, context, worldObjects, test)
     local JBBW = getActivatedMods():contains("\\JB_Big_Wood")
     if test then
         if ISWorldObjectContextMenu.Test then return true end
@@ -54,32 +71,34 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     local highlightColorData = modOptions:getOption("Select_Color"):getValue()
 
     JB_ASSUtils.highlightColorData = { r = highlightColorData.r, g = highlightColorData.g, b = highlightColorData.b }
-    playerObj:getModData().highlightColorData = { r = highlightColorData.r, g = highlightColorData.g, b = highlightColorData.b }
+    playerObj:getModData().highlightColorData = { r = highlightColorData.r, g = highlightColorData.g, b =
+    highlightColorData.b }
 
     local subMenu = ISContextMenu:getNew(context)
 
     local clickedFlags = {}
-    runScanners(JBLogging.Scanners.ToolCheck, playerObj, nil, clickedFlags)
+
+    runScanners(Scanner.ToolCheck, playerObj, nil, clickedFlags)
 
     local function processSquare(sq, pl, cf)
-        runScanners(JBLogging.Scanners.Square, sq, pl, clickedFlags)
+        runScanners(Scanner.Square, sq, pl, cf)
         local objects = {}
         local obs = sq:getObjects()
         local wobs = sq:getWorldObjects()
 
-        for i = 0, obs:size() - 1 do table.insert(objects, {obj = obs:get(i), type = "Object"}) end
-        for i = 0, wobs:size() - 1 do table.insert(objects, {obj = wobs:get(i), type = "WorldObject"}) end
+        for i = 0, obs:size() - 1 do table.insert(objects, { obj = obs:get(i), type = "Object" }) end
+        for i = 0, wobs:size() - 1 do table.insert(objects, { obj = wobs:get(i), type = "WorldObject" }) end
 
         for _, entry in ipairs(objects) do
             local ent = entry.obj
-            
+
             if entry.type == "Object" then
-                runScanners(JBLogging.Scanners.Object, ent, pl, clickedFlags)
+                runScanners(Scanner.Object, ent, pl, cf)
             else
-                runScanners(JBLogging.Scanners.WorldObject, ent, pl, clickedFlags)
-                runScanners(JBLogging.Scanners.Recipe, ent, pl, clickedFlags)
+                runScanners(Scanner.WorldObject, ent, pl, cf)
+                runScanners(Scanner.Recipe, ent, pl, cf)
             end
-            runScanners(JBLogging.Scanners.Environment, ent, pl, clickedFlags)
+            runScanners(Scanner.Environment, ent, pl, cf)
         end
     end
 
@@ -100,7 +119,7 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
 
     local function getCategoryMenu(catKey)
         if not categoryMenus[catKey] then
-            local translationStr = JBLogging.MenuCategories[catKey] or catKey
+            local translationStr = RegisterOptions.MenuCategories[catKey] or catKey
 
             local catOption = subMenu:addOption(getText(translationStr), worldObjects, nil)
             local newSub = ISContextMenu:getNew(subMenu)
@@ -110,23 +129,18 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
         return categoryMenus[catKey]
     end
 
-    for _, option in ipairs(JBLogging.MenuOptions) do
+    for _, option in ipairs(RegisterOptions.OptionsList) do
         if option.condition(playerInv, clickedFlags) or alwaysShowMenu then
             local catMenu = getCategoryMenu(option.category)
-            
-            local newOption = catMenu:addOption(getText(option.translate), worldObjects, executeAction, option.action, playerObj, clickedFlags)
+
+            local newOption = catMenu:addOption(getText(option.translate), worldObjects, executeAction, option.action,
+                playerObj, clickedFlags)
 
             if option.tooltip then
                 local tooltip = ISWorldObjectContextMenu.addToolTip()
                 tooltip:setName(getText(option.translate))
 
                 local desc = getText(option.tooltip)
-
-                --[[ if option.reqTag then
-                    local color = option.condition and " <RGB:0,1,0> " or " <RGB:1,0,0> "
-                    desc = desc .. "\n\n" .. color .. getText("UI_JBLogging_Menu_Tooltip_Requires") .. ": " .. getText(option.reqTag)
-                end ]]
-
                 tooltip:setDescription(desc)
                 newOption.toolTip = tooltip
             end
@@ -137,21 +151,21 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     local storageMenu = getCategoryMenu("Storage")
 
     storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
-        JBLogging.Storage.Create(playerObj, "Logs")
+        StorageLogic.Create(playerObj, "Logs")
     end)
     storageMenu:addOption(getText("UI_JBLogging_PlanksStorage"), worldObjects, function()
-        JBLogging.Storage.Create(playerObj, "Planks")
+        StorageLogic.Create(playerObj, "Planks")
     end)
     storageMenu:addOption(getText("UI_JBLogging_ScrapWoodStorage"), worldObjects, function()
-        JBLogging.Storage.Create(playerObj, "Twigs")
+        StorageLogic.Create(playerObj, "Twigs")
     end)
     storageMenu:addOption(getText("UI_JBLogging_FirewoodStorage"), worldObjects, function()
-        JBLogging.Storage.Create(playerObj, "Firewood")
+        StorageLogic.Create(playerObj, "Firewood")
     end)
     storageMenu:addOption(getText("UI_JBLogging_StoneStorage"), worldObjects, function()
-        JBLogging.Storage.Create(playerObj, "Stones")
+        StorageLogic.Create(playerObj, "Stones")
     end)
-    
+
     if clickedFlags.hasAutoStorage then
         storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
             if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
@@ -172,4 +186,4 @@ JBLogging.doWorldContextMenu = function(playerIndex, context, worldObjects, test
     end
 end
 
-Events.OnFillWorldObjectContextMenu.Add(JBLogging.doWorldContextMenu)
+Events.OnFillWorldObjectContextMenu.Add(doWorldContextMenu)

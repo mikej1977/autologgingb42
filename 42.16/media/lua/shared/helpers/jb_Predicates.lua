@@ -1,7 +1,6 @@
 -- jb_Predicates.lua
-JBLogging = JBLogging or {}
 
-JBLogging.Predicates = {
+local Predicates = {
     ChopTree = function(item) return not item:isBroken() and item:hasTag(ItemTag.CHOP_TREE) end,
     WoodSaw = function(item) return not item:isBroken() and item:hasTag(ItemTag.SAW) end,
     CutPlant = function(item) return not item:isBroken() and item:hasTag(ItemTag.CUT_PLANT) end,
@@ -12,3 +11,5 @@ JBLogging.Predicates = {
             item:hasTag(ItemTag.PICK_AXE) or item:getType() == "PickAxe" or item:hasTag(ItemTag.STONE_MAUL)
     end,
 }
+
+return Predicates
