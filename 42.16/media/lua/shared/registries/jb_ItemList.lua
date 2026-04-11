@@ -1,16 +1,14 @@
--- jb_ItemList.lua
-JBLogging = JBLogging or {}
+-- registries/jb_ItemList.lua
+local ItemList = {}
 
-JBLogging.GatherItemList = {
-    
+ItemList.GatherItemList = {
     Logs = {
         ["Base.Log"] = true,
         ["JB_Big_Wood.LargeLog"] = true,
         ["JB_Big_Wood.VeryLargeLog"] = true,
-        ["JB_Big_Wood.SmallLog"] = true, 
+        ["JB_Big_Wood.SmallLog"] = true,
         ["JB_Big_Wood.MediumLog"] = true,
         ["Log"] = true,
-        
     },
 
     Planks = { ["Base.Plank"] = true },
@@ -26,11 +24,11 @@ JBLogging.GatherItemList = {
         ["TreeBranch2"] = true,
         ["Base.UnusableWood"] = true,
     },
-
+    
     Firewood = {
         ["Base.Firewood"] = true,
     },
-
+    
     Stones = {
         ["4Stones"] = true,
         ["LargeStoneTwigs"] = true,
@@ -52,7 +50,7 @@ JBLogging.GatherItemList = {
     Boulders = {
         ["Boulder"] = true,
     },
-
+    
     Stumps = {
         ["Small Stump"] = true,
         ["Tree Stump"] = true,
@@ -60,7 +58,7 @@ JBLogging.GatherItemList = {
     },
 }
 
-JBLogging.ProcessList = {
+ItemList.ProcessList = {
     SawLogs = {
         ["Base.Log"] = true,
         ["JB_Big_Wood.LargeLog"] = true,
@@ -69,7 +67,7 @@ JBLogging.ProcessList = {
 }
 
 -- For custom name pickup item lookups
-JBLogging.PickupItems = {
+ItemList.PickupItems = {
     ["4Stones"] = "Stone2",
     ["LargeStoneTwigs"] = "LargeStone",
     ["LargeStone"] = "LargeStone",
@@ -85,7 +83,7 @@ JBLogging.PickupItems = {
     ["Log"] = "Log",
 }
 
-JBLogging.BoulderConfig = {
+ItemList.BoulderConfig = {
     -- we match "boulders_" + min to max
     { min = 0,  max = 7,  tool = true,  time = 150, stones = 3 },
     { min = 8,  max = 15, tool = false, time = 50,  stones = 1 },
@@ -94,3 +92,5 @@ JBLogging.BoulderConfig = {
     { min = 44, max = 51, tool = false, time = 100, stones = 2 },
     { min = 52, max = 59, tool = true,  time = 200, stones = 3 },
 }
+
+return ItemList

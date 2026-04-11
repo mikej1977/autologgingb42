@@ -1,9 +1,16 @@
 -- jb_StorageLogic.lua
-require("registries/jb_ItemList")
+local ItemList = require("registries/jb_ItemList")
+local ContainerRegistry = require("registries/jb_ContainerRegistry")
 require("cursors/jb_StorageBuildCursor")
 
-JBLogging.Storage.Create = function(playerObj, typeKey)
-    local data = JBLogging.Storage.Types[typeKey]
+-- PZ setAcceptItemFunction has to reference a global string path?
+JBLogging = JBLogging or {}
+JBLogging.Storage = JBLogging.Storage or {}
+
+local StorageLogic = JBLogging.Storage
+
+StorageLogic.Create = function(playerObj, typeKey)
+    local data = ContainerRegistry.Types[typeKey]
     if not data then return end
 
     local sprite = data.sprites.cursor
@@ -15,7 +22,7 @@ JBLogging.Storage.Create = function(playerObj, typeKey)
     end
 end
 
-JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey, north, spriteName)
+StorageLogic.PlaceStorage = function(playerObj, _worldObjs, square, typeKey, north, spriteName)
     if not square then return end
 
     for i = 0, square:getObjects():size() - 1 do
@@ -32,7 +39,7 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
 
     local cell = square:getCell()
 
-    local data = JBLogging.Storage.Types[typeKey]
+    local data = ContainerRegistry.Types[typeKey]
     local finalSprite = (data and data.sprites.empty) or "blends_natural_01_64"
 
     local storageObj = IsoThumpable.new(cell, square, finalSprite, north, {})
@@ -43,7 +50,6 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
 
     local container = storageObj:getContainer()
     if not container then
-        --local contTranslationName = "UI_JBLogging_" .. getText(typeKey .. "Storage")
         local containerName = typeKey .. "Storage"
         container = ItemContainer.new(containerName, square, storageObj)
         storageObj:setContainer(container)
@@ -66,16 +72,16 @@ JBLogging.Storage.PlaceStorage = function(playerObj, _worldObjs, square, typeKey
     triggerEvent("OnContainerUpdate")
 end
 
-JBLogging.Storage.Accept = function(container, item)
+StorageLogic.Accept = function(container, item)
     local object = container:getParent()
     if not object then return true end
 
     local typeKey = object:getModData().JB_AutoLogStorage
-    if not typeKey then 
+    if not typeKey then
         return true
     end
 
-    local storageConfig = JBLogging.Storage.Types[typeKey]
+    local storageConfig = ContainerRegistry.Types[typeKey]
     if not storageConfig then return true end
 
     local itemFullType = item:getFullType()
@@ -91,11 +97,11 @@ JBLogging.Storage.Accept = function(container, item)
 end
 
 ---@param object IsoThumpable
-JBLogging.Storage.UpdateSprite = function(object)
+StorageLogic.UpdateSprite = function(object)
     if not object or not object:getModData().JB_AutoLogStorage then return end
 
     local typeKey = object:getModData().JB_AutoLogStorage
-    local data = JBLogging.Storage.Types[typeKey]
+    local data = ContainerRegistry.Types[typeKey]
     if not data then return end
 
     local container = object:getContainer()
@@ -128,7 +134,7 @@ JBLogging.Storage.UpdateSprite = function(object)
     if object:getSpriteName() ~= spriteName then
         object:setSpriteFromName(spriteName)
         object:transmitModData()
-        if isServer() then 
+        if isServer() then
             object:sendObjectChange(IsoObjectChange.SPRITE)
             object:transmitUpdatedSpriteToClients()
         end
@@ -136,17 +142,17 @@ JBLogging.Storage.UpdateSprite = function(object)
     triggerEvent("OnContainerUpdate")
 end
 
-JBLogging.Storage.CheckSquare = function(square)
+StorageLogic.CheckSquare = function(square)
     if not square then return end
     for i = 0, square:getSpecialObjects():size() - 1 do
         local obj = square:getSpecialObjects():get(i)
         if obj:getModData().JB_AutoLogStorage then
-            JBLogging.Storage.UpdateSprite(obj)
+            StorageLogic.UpdateSprite(obj)
         end
     end
 end
 
-JBLogging.Storage.OnRefreshContainers = function(inventoryPage, state)
+StorageLogic.OnRefreshContainers = function(inventoryPage, state)
     if state ~= "end" then return end
     if inventoryPage.onCharacter then return end
 
@@ -160,13 +166,13 @@ JBLogging.Storage.OnRefreshContainers = function(inventoryPage, state)
             local modData = object:getModData()
             if modData and modData.JB_AutoLogStorage then
                 container:setAcceptItemFunction("JBLogging.Storage.Accept")
-                JBLogging.Storage.UpdateSprite(object)
+                StorageLogic.UpdateSprite(object)
             end
         end
     end
 end
 
-Events.OnRefreshInventoryWindowContainers.Add(JBLogging.Storage.OnRefreshContainers)
+Events.OnRefreshInventoryWindowContainers.Add(StorageLogic.OnRefreshContainers)
 
 Events.OnContainerUpdate.Add(function(container)
     if not container or
@@ -178,7 +184,7 @@ Events.OnContainerUpdate.Add(function(container)
     if not container:getSquare() then return end
     local sq = container:getSquare()
     if not sq then return end
-    JBLogging.Storage.CheckSquare(sq)
+    StorageLogic.CheckSquare(sq)
 end)
 
 Events.OnObjectAboutToBeRemoved.Add(function(obj)
@@ -212,7 +218,7 @@ end)
 
 Events.LoadGridsquare.Add(function(square)
     if not square then return end
-    JBLogging.Storage.CheckSquare(square)
+    StorageLogic.CheckSquare(square)
 end)
 
 if isServer() then
@@ -223,7 +229,7 @@ if isServer() then
 
             local square = cell:getGridSquare(args.x, args.y, args.z)
             if square then
-                JBLogging.Storage.PlaceStorage(
+                StorageLogic.PlaceStorage(
                     player,
                     nil,
                     square,
@@ -236,4 +242,4 @@ if isServer() then
     end)
 end
 
-return JBLogging
+return StorageLogic

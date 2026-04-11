@@ -1,10 +1,10 @@
-JBLogging = JBLogging or {}
-require("menu/jb_RegisterMenuOptions")
+-- registries/jb_MenuRegistry.lua
+local MenuOptions = require("helpers/jb_RegisterMenuOptions")
 require("logic/jb_ClearingLogic")
 require("logic/jb_ProcessingLogic")
 require("logic/jb_GatheringLogic")
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasLog
@@ -14,7 +14,7 @@ JBLogging.registerMenuOption({
     action = { "SelectSquareAndArea", "gatherLogs" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasPlank
@@ -24,7 +24,7 @@ JBLogging.registerMenuOption({
     action = { "SelectSquareAndArea", "gatherPlanks" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasFirewood
@@ -34,7 +34,7 @@ JBLogging.registerMenuOption({
     action = { "SelectSquareAndArea", "gatherFirewood" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasStone
@@ -44,7 +44,7 @@ JBLogging.registerMenuOption({
     action = { "SelectSquareAndArea", "gatherStones" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Gathering",
     condition = function(playerInv, flags)
         return flags.hasTwig
@@ -54,7 +54,7 @@ JBLogging.registerMenuOption({
     action = { "SelectSquareAndArea", "gatherTwigsAndBranches" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Clearing",
     condition = function(playerInv, flags)
         return flags.toolChopTree and flags.hasTree
@@ -65,7 +65,7 @@ JBLogging.registerMenuOption({
     action = { "SelectArea", "unifiedClear", "Tree" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Clearing",
     condition = function(playerInv, flags)
         return flags.toolDigStump and flags.hasStump
@@ -76,7 +76,7 @@ JBLogging.registerMenuOption({
     action = { "SelectArea", "unifiedClear", "Stump" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Clearing",
     condition = function(playerInv, flags)
         return flags.toolCutPlant and flags.hasBush
@@ -87,7 +87,7 @@ JBLogging.registerMenuOption({
     action = { "SelectArea", "unifiedClear", "Bush" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Clearing",
     condition = function(playerInv, flags)
         return flags.hasGrass
@@ -98,7 +98,7 @@ JBLogging.registerMenuOption({
     action = { "SelectArea", "unifiedClear", "Grass" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Clearing",
     condition = function(playerInv, flags)
         return flags.toolBreakBoulder and flags.hasBoulder
@@ -109,7 +109,7 @@ JBLogging.registerMenuOption({
     action = { "SelectArea", "unifiedClear", "Boulder" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Processing",
     condition = function(playerInv, flags)
         return flags.recipeSawPlanks and flags.hasLog
@@ -120,7 +120,7 @@ JBLogging.registerMenuOption({
     action = { "SelectArea", "unifiedProcess", "recipeSawPlanks" },
 })
 
-JBLogging.registerMenuOption({
+MenuOptions.registerMenuOption({
     category = "Processing",
     condition = function(playerInv, flags)
         return flags.recipeChopFirewood and flags.toolWoodSaw
@@ -130,3 +130,5 @@ JBLogging.registerMenuOption({
     reqTag = "UI_JBLogging_Menu_Req_Chop_Firewood",
     action = { "SelectArea", "unifiedProcess", "recipeChopFirewood" },
 })
+
+return MenuOptions

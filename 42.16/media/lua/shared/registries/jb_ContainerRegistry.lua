@@ -1,13 +1,12 @@
--- jb_containerRegistry.lua
-require("registries/jb_ItemList")
+-- registries/jb_ContainerRegistry.lua
+local ItemList = require("registries/jb_ItemList")
 
-JBLogging = JBLogging or {}
-JBLogging.Storage = {}
+local ContainerRegistry = {}
 
-JBLogging.Storage.Types = {
+ContainerRegistry.Types = {
     Logs = {
         name = "Log Storage",
-        itemType = JBLogging.GatherItemList.Logs,
+        itemType = ItemList.GatherItemList.Logs,
         sprites = {
             empty = "jb_autologging_20",
             cursor = "jb_autologging_4",
@@ -27,7 +26,7 @@ JBLogging.Storage.Types = {
 
     Planks = {
         name = "Plank Storage",
-        itemType = JBLogging.GatherItemList.Planks,
+        itemType = ItemList.GatherItemList.Planks,
         sprites = {
             empty = "jb_autologging_20",
             cursor = "jb_autologging_12",
@@ -47,7 +46,7 @@ JBLogging.Storage.Types = {
 
     Twigs = {
         name = "Twig Storage",
-        itemType = JBLogging.GatherItemList.Twigs,
+        itemType = ItemList.GatherItemList.Twigs,
         sprites = {
             empty = "jb_autologging_20",
             cursor = "jb_autologging_16",
@@ -67,7 +66,7 @@ JBLogging.Storage.Types = {
 
     Firewood = {
         name = "Firewood Storage",
-        itemType = JBLogging.GatherItemList.Firewood,
+        itemType = ItemList.GatherItemList.Firewood,
         sprites = {
             empty = "jb_autologging_20",
             cursor = "jb_autologging_28",
@@ -87,7 +86,7 @@ JBLogging.Storage.Types = {
 
     Stones = {
         name = "Stone Storage",
-        itemType = JBLogging.GatherItemList.Stones,
+        itemType = ItemList.GatherItemList.Stones,
         sprites = {
             empty = "jb_autologging_20",
             cursor = "jb_autologging_22",
@@ -105,3 +104,5 @@ JBLogging.Storage.Types = {
         }
     }
 }
+
+return ContainerRegistry
