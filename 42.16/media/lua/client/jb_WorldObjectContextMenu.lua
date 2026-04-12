@@ -5,6 +5,7 @@ local Scanner = require("menu/jb_Scanner")
 local ClearingLogic = require("logic/jb_ClearingLogic")
 local GatheringLogic = require("logic/jb_GatheringLogic")
 local ProcessingLogic = require("logic/jb_ProcessingLogic")
+local ContainerRegistry = require("registries/jb_ContainerRegistry")
 local JB_ASSUtils = require("JB_ASSUtils")
 
 local function runScanners(registry, target, player, flags)
@@ -119,23 +120,40 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
     end
 
     local showMenu = false
+    local domainMenus = {}
     local categoryMenus = {}
 
-    local function getCategoryMenu(catKey)
-        if not categoryMenus[catKey] then
-            local translationStr = RegisterOptions.MenuCategories[catKey] or catKey
+    local function getDomainMenu(domainKey)
+        if not domainMenus[domainKey] then
+            local translationStr = RegisterOptions.MenuCategories[domainKey] or domainKey
+            local dOption = subMenu:addOption(getText(translationStr), worldObjects, nil)
 
-            local catOption = subMenu:addOption(getText(translationStr), worldObjects, nil)
-            local newSub = ISContextMenu:getNew(subMenu)
-            context:addSubMenu(catOption, newSub)
-            categoryMenus[catKey] = newSub
+            local dMenu = ISContextMenu:getNew(subMenu)
+            context:addSubMenu(dOption, dMenu)
+            domainMenus[domainKey] = dMenu
         end
-        return categoryMenus[catKey]
+        return domainMenus[domainKey]
+    end
+
+    local function getCategoryMenu(domainKey, catKey)
+        local dMenu = getDomainMenu(domainKey)
+        local cacheKey = domainKey .. "_" .. catKey
+
+        if not categoryMenus[cacheKey] then
+            local translationStr = RegisterOptions.MenuCategories[catKey] or catKey
+            local catOption = dMenu:addOption(getText(translationStr), worldObjects, nil)
+
+            local cMenu = ISContextMenu:getNew(dMenu)
+            context:addSubMenu(catOption, cMenu)
+            categoryMenus[cacheKey] = cMenu
+        end
+        return categoryMenus[cacheKey]
     end
 
     for _, option in ipairs(RegisterOptions.OptionsList) do
         if option.condition(playerInv, clickedFlags) or alwaysShowMenu then
-            local catMenu = getCategoryMenu(option.category)
+            local domain = option.domain or "Logging"
+            local catMenu = getCategoryMenu(domain, option.category)
 
             local newOption = catMenu:addOption(getText(option.translate), worldObjects, executeAction, option.action,
                 playerObj, clickedFlags)
@@ -152,9 +170,9 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
         end
     end
 
-    local storageMenu = getCategoryMenu("Storage")
+    --local storageMenu = getCategoryMenu("Storage")
 
-    storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
+--[[     storageMenu:addOption(getText("UI_JBLogging_LogStorage"), worldObjects, function()
         StorageLogic.Create(playerObj, "Logs")
     end)
     storageMenu:addOption(getText("UI_JBLogging_PlanksStorage"), worldObjects, function()
@@ -176,6 +194,27 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
                 ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage, 50))
             end
         end)
+    end ]]
+
+    for typeKey, data in pairs(ContainerRegistry.Types) do
+        local domain = data.domain or "Logging"
+        local storageMenu = getCategoryMenu(domain, "Storage")
+
+        local textKey = data.translate or typeKey
+        local displayText = getText(textKey)
+
+        storageMenu:addOption(displayText, worldObjects, function()
+            StorageLogic.Create(playerObj, typeKey)
+        end)
+    end
+
+    if clickedFlags.hasAutoStorage then
+        local storageMenu = getCategoryMenu("Logging", "Storage")
+        storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
+            if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
+                ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage, 50))
+            end
+        end)
     end
 
     if showMenu then
@@ -188,6 +227,7 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
         end
         context:addSubMenu(loggingMenu, subMenu)
     end
+
 end
 
 Events.OnFillWorldObjectContextMenu.Add(doWorldContextMenu)

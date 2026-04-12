@@ -5,7 +5,7 @@ local ContainerRegistry = {}
 
 ContainerRegistry.Types = {
     Logs = {
-        name = "Log Storage",
+        translate = "IGUI_ContainerTitle_LogsStorage",
         itemType = ItemList.GatherItemList.Logs,
         sprites = {
             empty = "jb_autologging_20",
@@ -25,7 +25,7 @@ ContainerRegistry.Types = {
     },
 
     Planks = {
-        name = "Plank Storage",
+        translate = "IGUI_ContainerTitle_PlanksStorage",
         itemType = ItemList.GatherItemList.Planks,
         sprites = {
             empty = "jb_autologging_20",
@@ -45,7 +45,7 @@ ContainerRegistry.Types = {
     },
 
     Twigs = {
-        name = "Twig Storage",
+        translate = "IGUI_ContainerTitle_TwigsStorage",
         itemType = ItemList.GatherItemList.Twigs,
         sprites = {
             empty = "jb_autologging_20",
@@ -65,7 +65,7 @@ ContainerRegistry.Types = {
     },
 
     Firewood = {
-        name = "Firewood Storage",
+        translate = "IGUI_ContainerTitle_FirewoodStorage",
         itemType = ItemList.GatherItemList.Firewood,
         sprites = {
             empty = "jb_autologging_20",
@@ -85,7 +85,7 @@ ContainerRegistry.Types = {
     },
 
     Stones = {
-        name = "Stone Storage",
+        translate = "IGUI_ContainerTitle_StonesStorage",
         itemType = ItemList.GatherItemList.Stones,
         sprites = {
             empty = "jb_autologging_20",
