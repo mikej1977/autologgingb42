@@ -2,13 +2,10 @@
 local RegisterOptions = require("helpers/jb_RegisterMenuOptions")
 local StorageLogic = require("logic/jb_StorageLogic")
 local Scanner = require("menu/jb_Scanner")
+local ClearingLogic = require("logic/jb_ClearingLogic")
+local GatheringLogic = require("logic/jb_GatheringLogic")
+local ProcessingLogic = require("logic/jb_ProcessingLogic")
 local JB_ASSUtils = require("JB_ASSUtils")
-
-local LogicModules = {
-    require("logic/jb_ClearingLogic"),
-    require("logic/jb_GatheringLogic"),
-    require("logic/jb_ProcessingLogic")
-}
 
 local function runScanners(registry, target, player, flags)
     if not registry then return end
@@ -26,28 +23,35 @@ local function executeAction(worldObjects, optionAction, playerObj, clickedFlags
     local logicName = optionAction[2]
     local logicFunc = nil
 
-    for _, mod in ipairs(LogicModules) do
-        if type(mod) == "table" and mod[logicName] then
-            logicFunc = mod[logicName]
-            break
+    if type(ClearingLogic) == "table" and ClearingLogic[logicName] then
+        logicFunc = ClearingLogic[logicName]
+    elseif type(GatheringLogic) == "table" and GatheringLogic[logicName] then
+        logicFunc = GatheringLogic[logicName]
+    elseif type(ProcessingLogic) == "table" and ProcessingLogic[logicName] then
+        logicFunc = ProcessingLogic[logicName]
+    end
+
+    if not logicFunc and JBLogging then
+        -- try what is in the 'action' table
+        if type(JBLogging[logicName]) == "function" then
+            logicFunc = JBLogging[logicName]
+            -- or try adding the "JB_" prefix
+        elseif type(JBLogging["JB_" .. logicName]) == "function" then
+            logicFunc = JBLogging["JB_" .. logicName]
         end
     end
 
-    if not logicFunc and JBLogging and type(JBLogging[logicName]) == "function" then
-        logicFunc = JBLogging[logicName]
-    end
-
-    local params = {}
-    for i = 3, #optionAction do
-        local p = optionAction[i]
-        if type(p) == "string" and clickedFlags[p] ~= nil then
-            table.insert(params, clickedFlags[p])
-        else
-            table.insert(params, p)
-        end
-    end
-
+    -- If we found it, run it and if not, tell it to the console cause the face don't care
     if utilityFunc and logicFunc then
+        local params = {}
+        for i = 3, #optionAction do
+            local p = optionAction[i]
+            if type(p) == "string" and clickedFlags[p] ~= nil then
+                table.insert(params, clickedFlags[p])
+            else
+                table.insert(params, p)
+            end
+        end
         utilityFunc(worldObjects, playerObj, logicFunc, unpack(params))
     else
         print("ERROR: JBLogging - Could not find utility or logic function for: " .. tostring(logicName))

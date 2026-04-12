@@ -1,5 +1,8 @@
 -- jb_API.lua
 
+local GatheringLogic = require("logic/jb_GatheringLogic")
+local ProcessingLogic = require("logic/jb_ProcessingLogic")
+local ClearingLogic = require("logic/jb_ClearingLogic")
 local Scanner = require("menu/jb_Scanner")
 local ItemList = require("registries/jb_ItemList")
 local ContainerRegistry = require("registries/jb_ContainerRegistry")
@@ -50,6 +53,7 @@ JBLogging.API.addItemToProcess = function(category, itemData)
         print("JBLogging API: addItemToProcess expects itemData to be a string or a table of strings.")
     end
 end
+
 --- add item to clear
 JBLogging.API.addItemToClear = function(category, identifier, extraData)
     if category == "Stumps" then
@@ -62,13 +66,26 @@ JBLogging.API.addItemToClear = function(category, identifier, extraData)
     end
 end
 
---- add item = pickup for tile objects ie ["4Stones"] = "Stone2"
+--- add item = pickup for tile objects ie ["4Stones"] = "Base.Stone2"
 JBLogging.API.addItemPickup = function(customName, yieldFullType)
     ItemList.PickupItems[customName] = yieldFullType
 end
 
 --- add container
 JBLogging.API.addContainer = function(typeKey, containerData)
+    if type(typeKey) ~= "string" or type(containerData) ~= "table" then
+        print("JBLogging API: addContainer expects a string key and a table of data.")
+        return
+    end
+
+    if type(containerData.itemType) == "string" then
+        if ItemList.GatherItemList[containerData.itemType] then
+            containerData.itemType = ItemList.GatherItemList[containerData.itemType]
+        else
+            print("JBLogging API Warning: itemType '" .. containerData.itemType .. "' not found in GatherItemList.")
+        end
+    end
+
     ContainerRegistry.Types[typeKey] = containerData
 end
 
@@ -104,4 +121,82 @@ JBLogging.API.addDropItem = function(itemData)
     else
         print("JBLogging API: addDropItem expects a string or a table of strings.")
     end
+end
+
+-- The eyes, they never close. Emblem of vigilance.
+local function shouldYouFuckOff(functionName, func)
+    local finalName = "JB_" .. functionName
+    if JBLogging[finalName] then
+        print("JBLogging API ERROR: Logic name '" .. finalName .. "' already exists. Registration aborted.")
+        return false
+    end
+    JBLogging[finalName] = func
+    return true
+end
+
+local function bcMyMemoryBad(input)
+    local output = {}
+    if type(input) == "string" then
+        output[input] = true
+    elseif type(input) == "table" then
+        for k, v in pairs(input) do
+            if type(k) == "number" and type(v) == "string" then
+                output[v] = true
+            elseif type(k) == "string" then
+                output[k] = true
+            end
+        end
+    end
+    return output
+end
+
+--- add gather logic
+JBLogging.API.addGatherLogic = function(functionName, itemData, storageType)
+    if type(functionName) ~= "string" then return end
+
+    local itemsTable = bcMyMemoryBad(itemData)
+
+    local logicFunc = function(playerObj, worldObjects, selectedSquare, selectedArea)
+        if not selectedSquare or not selectedArea then return end
+
+        JB_GatherItemsAction:new(
+            playerObj,
+            selectedSquare,
+            selectedArea,
+            itemsTable,
+            storageType
+        )
+    end
+
+    shouldYouFuckOff(functionName, logicFunc)
+end
+
+--- ADD PROCESS LOGIC
+JBLogging.API.addProcessLogic = function(functionName, recipe, processCategory)
+    if type(functionName) ~= "string" or type(recipe) ~= "string" or type(processCategory) ~= "string" then
+        print("JBLogging API: addProcessLogic expects string functionName, string recipe, and string processCategory.")
+        return
+    end
+
+    local logicFunc = function(playerObj, worldObjects, selectedSquare, selectedArea)
+        if not selectedArea or not selectedArea.squares then return end
+        ProcessingLogic.unifiedProcess(playerObj, worldObjects, selectedArea, recipe, processCategory)
+    end
+
+    shouldYouFuckOff(functionName, logicFunc)
+end
+
+--- add clearing logic
+JBLogging.API.addClearLogic = function(functionName, clearType)
+    if type(functionName) ~= "string" or type(clearType) ~= "string" then
+        print("JBLogging API: addClearLogic expects a string functionName and a string clearType.")
+        return
+    end
+
+    local logicFunc = function(playerObj, worldObjects, selectedSquare, selectedArea)
+        if not selectedArea or not selectedArea.squares then return end
+        ClearingLogic.unifiedClear(playerObj, worldObjects, selectedArea, clearType)
+    end
+
+    shouldYouFuckOff(functionName, logicFunc)
 end

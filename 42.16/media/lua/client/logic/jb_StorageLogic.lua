@@ -108,21 +108,23 @@ StorageLogic.UpdateSprite = function(object)
     if not container then return end
 
     local weight = container:getContentsWeight()
+    local capacity = container:getCapacity()
+    local percent = weight / capacity
     local isNorth = object:getNorth()
 
     local spriteName = data.sprites.empty or "blends_natural_01_64"
     local levelKey = nil
 
-    if weight > 75 then
+    if percent > 0.75 then
         levelKey = "level4"
-    elseif weight > 50 then
+    elseif percent > 0.50 then
         levelKey = "level3"
-    elseif weight > 25 then
+    elseif percent > 0.25 then
         levelKey = "level2"
-    elseif weight > 0 then
+    elseif percent > 0 then
         levelKey = "level1"
     end
-
+    
     if levelKey then
         if isNorth and data.sprites[levelKey .. "north"] then
             spriteName = data.sprites[levelKey .. "north"]
@@ -139,7 +141,6 @@ StorageLogic.UpdateSprite = function(object)
             object:transmitUpdatedSpriteToClients()
         end
 
-        -- MOVED INSIDE THE IF STATEMENT to prevent a game-freezing infinite loop!
         triggerEvent("OnContainerUpdate")
     end
 end

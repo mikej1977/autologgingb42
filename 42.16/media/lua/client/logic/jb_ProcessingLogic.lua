@@ -2,9 +2,9 @@
 local ItemList = require("registries/jb_ItemList")
 local ActionSpeedKeeper = require("helpers/jb_SpeedKeeper")
 
-local ProcessingLogic = {}
+local JB_ProcessingLogic = {}
 
-ProcessingLogic.unifiedProcess = function(playerObj, worldObjects, selectedArea, recipe, processCategory)
+JB_ProcessingLogic.unifiedProcess = function(playerObj, worldObjects, selectedArea, recipe, processCategory)
     if not (selectedArea and selectedArea.squares and recipe and processCategory) then return end
 
     local processItems = ItemList.ProcessList[processCategory]
@@ -69,4 +69,4 @@ ProcessingLogic.unifiedProcess = function(playerObj, worldObjects, selectedArea,
     Events.OnTick.Add(OnTick)
 end
 
-return ProcessingLogic
+return JB_ProcessingLogic
