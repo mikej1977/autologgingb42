@@ -1,4 +1,5 @@
 -- jb_WorldObjectContextMenu.lua
+
 local RegisterOptions = require("helpers/jb_RegisterMenuOptions")
 local StorageLogic = require("logic/jb_StorageLogic")
 local Scanner = require("menu/jb_Scanner")
@@ -60,7 +61,28 @@ local function executeAction(worldObjects, optionAction, playerObj, clickedFlags
 end
 
 local function doWorldContextMenu(playerIndex, context, worldObjects, test)
+    if test then return ISWorldObjectContextMenu.setTest() end
+
+    local modOptions = PZAPI.ModOptions:getOptions("JBLoggingModOptions")
+    local useRadial = modOptions:getOption("Use_Radial_Menu"):getValue()
+
+    if useRadial then
+        local RadialMenu = require("jb_RadialMenu")
+        local keepOnTop = modOptions:getOption("Keep_Menu_At_Top"):getValue()
+        local menuText = getText("UI_WorkOrders_Root")
+
+        if keepOnTop then
+            context:addOptionOnTop(menuText, worldObjects, RadialMenu.Show, playerIndex)
+        else
+            context:insertOptionAfter(getText("ContextMenu_SitGround"), menuText, worldObjects, RadialMenu.Show,
+                playerIndex)
+        end
+
+        return
+    end
+
     local JBBW = getActivatedMods():contains("\\JB_Big_Wood")
+    
     if test then
         if ISWorldObjectContextMenu.Test then return true end
         return ISWorldObjectContextMenu.setTest()
@@ -70,7 +92,6 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
     if playerObj:getVehicle() then return end
     local playerInv = playerObj:getInventory()
 
-    local modOptions = PZAPI.ModOptions:getOptions("JBLoggingModOptions")
     local alwaysShowMenu = modOptions:getOption("Always_Show_Menu"):getValue(1)
     local keepOnTop = modOptions:getOption("Keep_Menu_At_Top"):getValue(1)
     local highlightColorData = modOptions:getOption("Select_Color"):getValue()
@@ -174,7 +195,7 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
 
     for _, option in ipairs(RegisterOptions.OptionsList) do
         if option.condition(playerInv, clickedFlags) or alwaysShowMenu then
-            local domain = option.domain or "UI_JBLogging_Menu_Name"
+            local domain = option.domain or "Logging"
             local catMenu = getCategoryMenu(domain, option.category)
 
             local newOption = catMenu:addOption(getText(option.translate), worldObjects, executeAction, option.action,
@@ -219,7 +240,7 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
     end ]]
 
     for typeKey, data in pairs(ContainerRegistry.Types) do
-        local domain = data.domain or "UI_JBLogging_Menu_Name"
+        local domain = data.domain or "Logging"
         local storageMenu = getCategoryMenu(domain, "Storage")
 
         local textKey = data.translate or typeKey
@@ -228,8 +249,9 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
         storageMenu:addOption(displayText, worldObjects, function()
             StorageLogic.Create(playerObj, typeKey)
         end)
-    end
 
+        showMenu = true
+    end
     --[[ if clickedFlags.hasAutoStorage then
         local storageMenu = getCategoryMenu("Logging", "Storage")
         storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()

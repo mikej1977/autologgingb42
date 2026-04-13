@@ -123,7 +123,7 @@ function RadialMenu.DisplayLevel(playerIndex, worldObjects, clickedFlags, tree, 
     local menu = getPlayerRadialMenu(playerIndex)
     menu:clear()
 
-    local gearTex = getTexture("media/ui/inventoryPanes/Button_Gear.png")
+    local gearTex = getTexture("media/ui/zomboidIcon32.png")
     local backTex = getTexture("media/ui/emotes/back.png") or gearTex
 
     local options = PZAPI.ModOptions:getOptions("JBLoggingModOptions")

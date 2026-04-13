@@ -51,6 +51,10 @@ StorageLogic.PlaceStorage = function(playerObj, _worldObjs, square, typeKey, nor
     local container = storageObj:getContainer()
     if not container then
         local containerName = typeKey .. "Storage"
+        
+        -- "IGUI_ContainerTitle_LogsStorage": "Logs Storage",
+        -- "UI_JBLogging_LogStorage": "Build Log Storage",
+        --local containerName = getText"UI_JBLogging_" .. typeKey .. "Storage"
         container = ItemContainer.new(containerName, square, storageObj)
         storageObj:setContainer(container)
     end
