@@ -135,8 +135,30 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
         return domainMenus[domainKey]
     end
 
-    local function getCategoryMenu(domainKey, catKey)
+    --[[ local function getCategoryMenu(domainKey, catKey)
         local dMenu = getDomainMenu(domainKey)
+        local cacheKey = domainKey .. "_" .. catKey
+
+        if not categoryMenus[cacheKey] then
+            local translationStr = RegisterOptions.MenuCategories[catKey] or catKey
+            local catOption = dMenu:addOption(getText(translationStr), worldObjects, nil)
+
+            local cMenu = ISContextMenu:getNew(dMenu)
+            context:addSubMenu(catOption, cMenu)
+            categoryMenus[cacheKey] = cMenu
+        end
+        return categoryMenus[cacheKey]
+    end ]]
+
+    local function getCategoryMenu(domainKey, catKey)
+        local options = PZAPI.ModOptions:getOptions("JBLoggingModOptions")
+        local collapseMenu = options:getOption("Collapse_Context_Menu"):getValue()
+        local dMenu = getDomainMenu(domainKey)
+        
+        if collapseMenu then
+            return dMenu
+        end
+
         local cacheKey = domainKey .. "_" .. catKey
 
         if not categoryMenus[cacheKey] then
@@ -152,7 +174,7 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
 
     for _, option in ipairs(RegisterOptions.OptionsList) do
         if option.condition(playerInv, clickedFlags) or alwaysShowMenu then
-            local domain = option.domain or "Logging"
+            local domain = option.domain or "UI_JBLogging_Menu_Name"
             local catMenu = getCategoryMenu(domain, option.category)
 
             local newOption = catMenu:addOption(getText(option.translate), worldObjects, executeAction, option.action,
@@ -197,7 +219,7 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
     end ]]
 
     for typeKey, data in pairs(ContainerRegistry.Types) do
-        local domain = data.domain or "Logging"
+        local domain = data.domain or "UI_JBLogging_Menu_Name"
         local storageMenu = getCategoryMenu(domain, "Storage")
 
         local textKey = data.translate or typeKey
@@ -208,8 +230,26 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
         end)
     end
 
-    if clickedFlags.hasAutoStorage then
+    --[[ if clickedFlags.hasAutoStorage then
         local storageMenu = getCategoryMenu("Logging", "Storage")
+        storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
+            if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
+                ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage, 50))
+            end
+        end)
+    end ]]
+
+    if clickedFlags.hasAutoStorage and clickedFlags.objAutoStorage then
+        local modData = clickedFlags.objAutoStorage:getModData()
+        local typeKey = modData.JB_AutoLogStorage
+
+        local domain = "UI_JBLogging_Menu_Name"
+        if typeKey and ContainerRegistry.Types[typeKey] then
+            domain = ContainerRegistry.Types[typeKey].domain or "Logging"
+        end
+
+        local storageMenu = getCategoryMenu(domain, "Storage")
+
         storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
             if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
                 ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage, 50))
@@ -219,7 +259,7 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
 
     if showMenu then
         local loggingMenu
-        local menuName = getText("UI_JBLogging_Menu_Name")
+        local menuName = getText("UI_WorkOrders_Root")
         if keepOnTop then
             loggingMenu = context:addOptionOnTop(menuName)
         else

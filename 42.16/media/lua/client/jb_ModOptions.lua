@@ -18,6 +18,7 @@ local function JBLoggingOptions()
     options:addSeparator()
 
     config.checkBox = options:addTickBox("Use_Sidebar_Menu", getText("UI_JBLogging_ModOptions_UseSideBarMenu"), false)
+    config.checkBox = options:addTickBox("Collapse_Context_Menu", getText("UI_JBLogging_ModOptions_Collapse_Context_Menu"), false)
     config.checkBox = options:addTickBox("Always_Show_Menu", getText("UI_JBLogging_ModOptions_AlwaysShowMenu"), true)
     config.checkBox = options:addTickBox("Keep_Menu_At_Top", getText("UI_JBLogging_ModOptions_KeepMenuOnTop"), false)
     options:addSeparator()
