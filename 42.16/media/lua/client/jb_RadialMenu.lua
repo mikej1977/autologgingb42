@@ -78,7 +78,8 @@ local function buildAvailableTree(playerObj, clickedFlags)
             table.insert(tree[domain][cat], {
                 type = "action",
                 text = option.translate,
-                action = option.action
+                action = option.action,
+                icon = option.icon
             })
             optionsAdded = optionsAdded + 1
         end
@@ -92,11 +93,12 @@ local function buildAvailableTree(playerObj, clickedFlags)
         table.insert(tree[domain][cat], {
             type = "build",
             text = textKey,
-            typeKey = typeKey
+            typeKey = typeKey,
+            icon = data.icon
         })
         optionsAdded = optionsAdded + 1
     end
-
+    
     if clickedFlags.hasAutoStorage and clickedFlags.objAutoStorage then
         local modData = clickedFlags.objAutoStorage:getModData()
         local typeKey = modData.JB_AutoLogStorage
@@ -109,7 +111,8 @@ local function buildAvailableTree(playerObj, clickedFlags)
         table.insert(tree[domain][cat], {
             type = "remove",
             text = "UI_JBLogging_Menu_RemoveStorage",
-            obj = clickedFlags.objAutoStorage
+            obj = clickedFlags.objAutoStorage,
+            icon = "media/ui/your_trash_icon.png" 
         })
         optionsAdded = optionsAdded + 1
     end
@@ -132,7 +135,13 @@ function RadialMenu.DisplayLevel(playerIndex, worldObjects, clickedFlags, tree, 
     if not currentDomain then
         for domainName, _ in pairs(tree) do
             local translationStr = RegisterOptions.MenuCategories[domainName] or domainName
-            menu:addSlice(getText(translationStr), gearTex, RadialMenu.DisplayLevel, playerIndex, worldObjects,
+
+            local sliceIcon = gearTex
+            if RegisterOptions.CategoryIcons and RegisterOptions.CategoryIcons[domainName] then
+                sliceIcon = getTexture(RegisterOptions.CategoryIcons[domainName]) or gearTex
+            end
+
+            menu:addSlice(getText(translationStr), sliceIcon, RadialMenu.DisplayLevel, playerIndex, worldObjects,
                 clickedFlags, tree, domainName, nil)
         end
     elseif collapseMenu or currentCategory then
@@ -147,13 +156,18 @@ function RadialMenu.DisplayLevel(playerIndex, worldObjects, clickedFlags, tree, 
         end
 
         for _, opt in ipairs(optionsList) do
+            local sliceIcon = gearTex
+            if opt.icon then
+                sliceIcon = getTexture(opt.icon) or gearTex
+            end
+
             if opt.type == "action" then
-                menu:addSlice(getText(opt.text), gearTex, executeAction, worldObjects, opt.action, playerObj,
+                menu:addSlice(getText(opt.text), sliceIcon, executeAction, worldObjects, opt.action, playerObj,
                     clickedFlags)
             elseif opt.type == "build" then
-                menu:addSlice(getText(opt.text), gearTex, StorageLogic.Create, playerObj, opt.typeKey)
+                menu:addSlice(getText(opt.text), sliceIcon, StorageLogic.Create, playerObj, opt.typeKey)
             elseif opt.type == "remove" then
-                menu:addSlice(getText(opt.text), gearTex, function()
+                menu:addSlice(getText(opt.text), sliceIcon, function()
                     if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
                         ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, opt.obj, 50))
                     end
@@ -172,12 +186,15 @@ function RadialMenu.DisplayLevel(playerIndex, worldObjects, clickedFlags, tree, 
     else
         for catName, _ in pairs(tree[currentDomain]) do
             local translationStr = RegisterOptions.MenuCategories[catName] or catName
-            menu:addSlice(getText(translationStr), gearTex, RadialMenu.DisplayLevel, playerIndex, worldObjects,
+            
+            local sliceIcon = gearTex
+            if RegisterOptions.CategoryIcons and RegisterOptions.CategoryIcons[catName] then
+                sliceIcon = getTexture(RegisterOptions.CategoryIcons[catName]) or gearTex
+            end
+            
+            menu:addSlice(getText(translationStr), sliceIcon, RadialMenu.DisplayLevel, playerIndex, worldObjects,
                 clickedFlags, tree, currentDomain, catName)
         end
-
-        menu:addSlice(getText("IGUI_Emote_Back"), backTex, RadialMenu.DisplayLevel, playerIndex, worldObjects,
-            clickedFlags, tree, nil, nil)
     end
 
     local x = getPlayerScreenLeft(playerIndex) + getPlayerScreenWidth(playerIndex) / 2

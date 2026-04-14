@@ -127,8 +127,8 @@ end
 --- Register a header in the right-click menu
 ---@param id string The internal name used in code
 ---@param translationKey string The text displayed in the in-game menu
-JBLogging.API.addMenuCategory = function(id, translationKey)
-    RegisterOptions.registerMenuCategory(id, translationKey)
+JBLogging.API.addMenuCategory = function(id, translationKey, iconPath)
+    RegisterOptions.registerMenuCategory(id, translationKey, iconPath)
 end
 
 --- Define a menu button and its behavior

@@ -3,15 +3,21 @@ local RegisterOptions = {}
 
 RegisterOptions.OptionsList = {}
 RegisterOptions.MenuCategories = {}
+RegisterOptions.CategoryIcons = {}
 
 --- @param id string Identifier (e.g., "Gathering")
---- @param translationKey string Translation key for the UI (e.g., "UI_JBLogging_Category_Gathering")
-function RegisterOptions.registerMenuCategory(id, translationKey)
+--- @param translationKey string Translation key (e.g., "UI_JBLogging_Category_Gathering")
+function RegisterOptions.registerMenuCategory(id, translationKey, iconPath)
     if type(id) ~= "string" or type(translationKey) ~= "string" then
         print("ERROR: RegisterOptions.registerMenuCategory - 'id' and 'translationKey' must both be strings.")
         return
     end
+
     RegisterOptions.MenuCategories[id] = translationKey
+
+    if iconPath and type(iconPath) == "string" then
+        RegisterOptions.CategoryIcons[id] = iconPath
+    end
 end
 
 --- @param option table
@@ -51,6 +57,16 @@ function RegisterOptions.registerMenuOption(option)
         return false
     end
 
+    if option.icon and type(option.icon) ~= "string" then
+        print("ERROR: RegisterOptions.registerMenuOption - 'icon' must be a string.")
+        return false
+    end
+
+    if option.categoryIcon and type(option.categoryIcon) ~= "string" then
+        print("ERROR: RegisterOptions.registerMenuOption - 'categoryIcon' must be a string.")
+        return false
+    end
+
     local actionType = type(option.action)
     if actionType ~= "function" and actionType ~= "table" then
         print("ERROR: RegisterOptions - 'action' must be a function or a table.")
@@ -65,9 +81,13 @@ function RegisterOptions.registerMenuOption(option)
         end
     end
 
+    if option.category and option.categoryIcon then
+        RegisterOptions.CategoryIcons[option.category] = option.categoryIcon
+    end
+
     table.insert(RegisterOptions.OptionsList, option)
+    
     return true
 end
 
--- This is the crucial part: return the local table so require() can catch it
 return RegisterOptions

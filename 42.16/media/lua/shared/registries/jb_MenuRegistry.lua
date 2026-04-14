@@ -11,6 +11,7 @@ MenuOptions.registerMenuOption({
     end,
     translate = "UI_JBLogging_Menu_Gather_Logs",
     tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Logs",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectSquareAndArea", "gatherLogs" },
 })
 
@@ -21,6 +22,7 @@ MenuOptions.registerMenuOption({
     end,
     translate = "UI_JBLogging_Menu_Gather_Planks",
     tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Planks",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectSquareAndArea", "gatherPlanks" },
 })
 
@@ -31,6 +33,7 @@ MenuOptions.registerMenuOption({
     end,
     translate = "UI_JBLogging_Menu_Gather_Firewood",
     tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Firewood",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectSquareAndArea", "gatherFirewood" },
 })
 
@@ -41,6 +44,7 @@ MenuOptions.registerMenuOption({
     end,
     translate = "UI_JBLogging_Menu_Gather_Stones",
     tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Stones",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectSquareAndArea", "gatherStones" },
 })
 
@@ -51,6 +55,7 @@ MenuOptions.registerMenuOption({
     end,
     translate = "UI_JBLogging_Menu_Gather_Branches",
     tooltip = "UI_JBLogging_Menu_Tooltip_Gather_Branches",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectSquareAndArea", "gatherTwigsAndBranches" },
 })
 
@@ -62,6 +67,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Menu_Clear_Trees",
     tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Trees",
     reqTag = "UI_JBLogging_Menu_Req_Clear_Trees",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectArea", "unifiedClear", "Tree" },
 })
 
@@ -73,6 +79,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Menu_Clear_Stumps",
     tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Stumps",
     reqTag = "UI_JBLogging_Menu_Req_Clear_Stumps",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectArea", "unifiedClear", "Stump" },
 })
 
@@ -84,6 +91,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Menu_Clear_Bushes",
     tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Bushes",
     reqTag = "UI_JBLogging_Menu_Req_Clear_Bushes",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectArea", "unifiedClear", "Bush" },
 })
 
@@ -95,6 +103,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Menu_Clear_Grass",
     tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Grass",
     reqTag = "UI_JBLogging_Menu_Req_Clear_Grass",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectArea", "unifiedClear", "Grass" },
 })
 
@@ -106,6 +115,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Menu_Clear_Boulders",
     tooltip = "UI_JBLogging_Menu_Tooltip_Clear_Boulders",
     reqTag = "UI_JBLogging_Menu_Req_Clear_Boulders",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectArea", "unifiedClear", "Boulder" },
 })
 
@@ -117,6 +127,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Menu_Saw_Planks",
     tooltip = "UI_JBLogging_Menu_Tooltip_Saw_Planks",
     reqTag = "UI_JBLogging_Menu_Req_Saw_Planks",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectArea", "unifiedProcess", "recipeSawPlanks", "SawLogs" },
 })
 
@@ -128,6 +139,7 @@ MenuOptions.registerMenuOption({
     translate = "UI_JBLogging_Chop_Firewood",
     tooltip = "UI_JBLogging_Menu_Tooltip_Chop_Firewood",
     reqTag = "UI_JBLogging_Menu_Req_Chop_Firewood",
+    icon = "media/ui/Sidebar/GatherLogs.png",
     action = { "SelectArea", "unifiedProcess", "recipeChopFirewood", "ChopFirewood" },
 })
 
