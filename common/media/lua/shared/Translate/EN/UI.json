@@ -1,14 +1,16 @@
 {
-    "UI_JBLogging_Category_Gathering": "Gathering...",
-    "UI_JBLogging_Category_Clearing": "Clearing...",
-    "UI_JBLogging_Category_Processing": "Processing...",
+    "UI_WorkOrders_Root": "Work Orders",
+    "UI_JBLogging_Category_Logging": "Logging",
+    "UI_JBLogging_Category_Gathering": "Gathering",
+    "UI_JBLogging_Category_Clearing": "Clearing",
+    "UI_JBLogging_Category_Processing": "Processing",
     "UI_JBLogging_Menu_Tooltip_Requires": "Requires",
 
     "UI_JBLogging_Menu_Quit": "Quit",
     "UI_JBLogging_Stack_Logs": "Stack Logs",
     "UI_JBLogging_Chop_Firewood": "Chop Firewood",
     "UI_JBLogging_Saw_tree": "Saw Down Tree",
-    "UI_JBLogging_Menu_Name": "Logging Menu",
+    "UI_JBLogging_Menu_Name": "Logging",
     "UI_JBLogging_Menu_Identify": "Identify Tree",
     "UI_JBLogging_Menu_Gather_Logs": "Gather Logs",
     "UI_JBLogging_Menu_Clear_Trees": "Clear Trees",
@@ -75,23 +77,25 @@
 
     "UI_JBLogging_Say_Nope": "Not now...",
     
-    "UI_JBLogging_ModOptions_Title": "JB's Auto Logging Menu Options",
-    "UI_JBLogging_ModOptions_Desc1": "<H1><LEFT><ORANGE> JB's Auto Logging Menu Options",
-    "UI_JBLogging_ModOptions_Desc2": "<SIZE:SMALL><LEFT>Deforestation Simulator",
+    "UI_JBLogging_ModOptions_Title": "JB's Work Orders Menu Options",
+    "UI_JBLogging_ModOptions_Desc1": "<H1><LEFT><ORANGE> JB's Work Orders Menu Options",
+    "UI_JBLogging_ModOptions_Desc2": "<SIZE:SMALL><LEFT> The Easy Button Simulator",
     "UI_JBLogging_ModOptions_Desc3": "<H2><LEFT> Menu Options",
-    "UI_JBLogging_ModOptions_UseSideBarMenu": "Use Sidebar Menu",
-    "UI_JBLogging_ModOptions_AlwaysShowMenu": "Always Show Menu",
-    "UI_JBLogging_ModOptions_KeepMenuOnTop": "Show Logging Mouse Menu At The Top",
+    "UI_JBLogging_ModOptions_UseSideBarMenu": "Show Sidebar Menu (Not Complete)",
+    "UI_JBLogging_ModOptions_AlwaysShowMenu": "Always Show Full Work Orders Menu",
+    "UI_JBLogging_ModOptions_KeepMenuOnTop": "Keep Work Orders Right-Click Menu At Top",
+    "UI_JBLogging_ModOptions_Collapse_Context_Menu": "Collapse Work Orders Menu (Cannot Use With Radial Menu)",
     "UI_JBLogging_ModOptions_CursorOptions": "<H2><LEFT> Cursor Options",
     "UI_JBLogging_ModOptions_SelectColor": "Choose Color For Selection Outline",
+    "UI_JBLogging_ModOptions_UseRadialMenu": "Use Work Orders Radial Menu",
 
-    "UI_JBLogging_StorageMenuTitle": "Storage Options...",
+    "UI_JBLogging_StorageMenuTitle": "Storage Options",
     
-    "UI_JBLogging_LogStorage": "Log Storage",
-    "UI_JBLogging_PlanksStorage": "Plank Storage",
-    "UI_JBLogging_ScrapWoodStorage": "Scrap Wood Storage",
-    "UI_JBLogging_FirewoodStorage": "Firewood Storage",
-    "UI_JBLogging_StoneStorage": "Stone Storage",
+    "UI_JBLogging_LogStorage": "Build Log Storage",
+    "UI_JBLogging_PlanksStorage": "Build Plank Storage",
+    "UI_JBLogging_ScrapWoodStorage": "Build Scrap Wood Storage",
+    "UI_JBLogging_FirewoodStorage": "Build Firewood Storage",
+    "UI_JBLogging_StoneStorage": "Build Stone Storage",
     "UI_JBLogging_Menu_RemoveStorage": "Remove Storage"
 
 }
