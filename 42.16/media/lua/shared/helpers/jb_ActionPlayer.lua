@@ -1,5 +1,4 @@
 -- jb_ActionPlayer.lua
-
 local ActionSpeedKeeper = require("helpers/jb_SpeedKeeper")
 
 local ActionPlayer = {}
@@ -78,4 +77,5 @@ function ActionPlayer.clear(playerObj)
         end
     end
 end
+
 return ActionPlayer

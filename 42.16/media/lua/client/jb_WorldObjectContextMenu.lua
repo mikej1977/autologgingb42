@@ -250,8 +250,13 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
             StorageLogic.Create(playerObj, typeKey)
         end)
 
+        storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
+            StorageLogic.Remove(playerObj)
+        end)
+
         showMenu = true
     end
+
     --[[ if clickedFlags.hasAutoStorage then
         local storageMenu = getCategoryMenu("Logging", "Storage")
         storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
@@ -261,7 +266,7 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
         end)
     end ]]
 
-    if clickedFlags.hasAutoStorage and clickedFlags.objAutoStorage then
+    --[[ if clickedFlags.hasAutoStorage and clickedFlags.objAutoStorage then
         local modData = clickedFlags.objAutoStorage:getModData()
         local typeKey = modData.JB_AutoLogStorage
 
@@ -270,14 +275,19 @@ local function doWorldContextMenu(playerIndex, context, worldObjects, test)
             domain = ContainerRegistry.Types[typeKey].domain or "Logging"
         end
 
-        local storageMenu = getCategoryMenu(domain, "Storage")
+        local storageMenu = getCategoryMenu(domain, "Storage") ]]
 
-        storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
+        --[[ storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
             if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
-                ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage))
+                ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, clickedFlags.objAutoStorage, 50))
             end
+        end) ]]
+
+        --[[ storageMenu:addOption(getText("UI_JBLogging_Menu_RemoveStorage"), worldObjects, function()
+            StorageLogic.Remove(playerObj)
         end)
-    end
+
+    end ]]
 
     if showMenu then
         local loggingMenu

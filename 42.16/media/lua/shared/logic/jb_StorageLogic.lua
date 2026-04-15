@@ -2,6 +2,7 @@
 local ItemList = require("registries/jb_ItemList")
 local ContainerRegistry = require("registries/jb_ContainerRegistry")
 require("cursors/jb_StorageBuildCursor")
+require("cursors/jb_StorageRemoveCursor")
 
 JBLogging = JBLogging or {}
 JBLogging.Storage = JBLogging.Storage or {}
@@ -18,6 +19,13 @@ StorageLogic.Create = function(playerObj, typeKey)
     if JB_StorageBuildCursor then
         local buildObj = JB_StorageBuildCursor:new(playerObj, typeKey, sprite, northSprite)
         getCell():setDrag(buildObj, playerObj:getPlayerNum())
+    end
+end
+
+StorageLogic.Remove = function(playerObj)
+    if JB_StorageRemoveCursor then
+        local cursor = JB_StorageRemoveCursor:new(playerObj)
+        getCell():setDrag(cursor, playerObj:getPlayerNum())
     end
 end
 
@@ -199,44 +207,6 @@ Events.LoadGridsquare.Add(function(square)
     if not square then return end
     StorageLogic.CheckSquare(square)
 end)
-
---[[ if isServer() then
-    Events.OnClientCommand.Add(function(module, command, player, args)
-        if module ~= "JBLogging" or command ~= "RemoveStorage" then return end
-
-        local square = getCell():getGridSquare(args.x, args.y, args.z)
-        if not square then return end
-
-        local storageObj = nil
-        for i = 0, square:getSpecialObjects():size() - 1 do
-            local obj = square:getSpecialObjects():get(i)
-            if obj:getModData().JB_AutoLogStorage then
-                storageObj = obj
-                break
-            end
-        end
-
-        if not storageObj then return end
-
-        local container = storageObj:getContainer()
-        if container and not container:isEmpty() then
-            local items = {}
-            local item = container:getItems()
-            for i = 0, item:size() - 1 do
-                items[#items + 1] = item:get(i)
-            end
-
-            for _, item in ipairs(items) do
-                container:Remove(item)
-                square:AddWorldInventoryItem(item, ZombRandFloat(0.1, 0.9), ZombRandFloat(0.1, 0.9), 0.0)
-            end
-        end
-
-        square:transmitRemoveItemFromSquare(storageObj)
-        square:RemoveTileObject(storageObj)
-        ISInventoryPage.dirtyUI()
-    end)
-end ]]
 
 Events.OnObjectAdded.Add(function(object)
     if not object then return end

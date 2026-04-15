@@ -1,5 +1,6 @@
 require "Definitions/ContainerButtonIcons"
 
+-- TODO: finsh the damn icons and textures bruh
 do
     local textures = {
         LogsStorage = "media/ui/ContainerIcons/container_icon_LogStorage.png",

@@ -99,20 +99,16 @@ local function buildAvailableTree(playerObj, clickedFlags)
         optionsAdded = optionsAdded + 1
     end
     
-    if clickedFlags.hasAutoStorage and clickedFlags.objAutoStorage then
-        local modData = clickedFlags.objAutoStorage:getModData()
-        local typeKey = modData.JB_AutoLogStorage
+    -- keep this in case I change my mind later
+    if clickedFlags.hasAutoStorage then -- and clickedFlags.objAutoStorage then
+
         local domain = "Logging"
-        if typeKey and ContainerRegistry.Types[typeKey] then
-            domain = ContainerRegistry.Types[typeKey].domain or "Logging"
-        end
         local cat = "Storage"
         ensurePath(domain, cat)
         table.insert(tree[domain][cat], {
             type = "remove",
             text = "UI_JBLogging_Menu_RemoveStorage",
-            obj = clickedFlags.objAutoStorage,
-            icon = "media/ui/your_trash_icon.png" 
+            icon = "media/ui/Radial/Storage.png" 
         })
         optionsAdded = optionsAdded + 1
     end
@@ -168,9 +164,7 @@ function RadialMenu.DisplayLevel(playerIndex, worldObjects, clickedFlags, tree, 
                 menu:addSlice(getText(opt.text), sliceIcon, StorageLogic.Create, playerObj, opt.typeKey)
             elseif opt.type == "remove" then
                 menu:addSlice(getText(opt.text), sliceIcon, function()
-                    if luautils.walkAdj(playerObj, clickedFlags.clickedSquare) then
-                        ISTimedActionQueue.add(JB_RemoveStorageAction:new(playerObj, opt.obj))
-                    end
+                    StorageLogic.Remove(playerObj)
                 end)
             end
         end

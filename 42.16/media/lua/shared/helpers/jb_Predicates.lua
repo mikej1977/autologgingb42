@@ -1,5 +1,4 @@
 -- jb_Predicates.lua
-
 local Predicates = {
     ChopTree = function(item) return not item:isBroken() and item:hasTag(ItemTag.CHOP_TREE) end,
     WoodSaw = function(item) return not item:isBroken() and item:hasTag(ItemTag.SAW) end,

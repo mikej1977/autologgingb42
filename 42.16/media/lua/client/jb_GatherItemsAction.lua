@@ -72,7 +72,6 @@ function JB_GatherItemsAction:getAvailableContainers()
         end
     end
 
-    --if self.storageType then
     local visited = {}
     local queue = { startSquare }
 
@@ -106,7 +105,6 @@ function JB_GatherItemsAction:getAvailableContainers()
                 local x, y, z = currentSq:getX(), currentSq:getY(), currentSq:getZ()
                 local cell = getCell()
 
-                -- use square:getSurroundingSquares() array?
                 local neighbors = {
                     cell:getGridSquare(x, y - 1, z),     -- N
                     cell:getGridSquare(x, y + 1, z),     -- S
@@ -122,7 +120,6 @@ function JB_GatherItemsAction:getAvailableContainers()
             end
         end
     end
-    --end
 
     return containers
 end

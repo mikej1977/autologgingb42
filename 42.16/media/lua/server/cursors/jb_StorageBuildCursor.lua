@@ -4,7 +4,7 @@ require "jb_StorageBuildAction"
 JB_StorageBuildCursor = ISBuildingObject:derive("JB_StorageBuildCursor")
 
 function JB_StorageBuildCursor:create(x, y, z, north, sprite)
-    local cell = getWorld():getCell()
+    local cell = getCell()
     local square = cell:getGridSquare(x, y, z)
     local playerObj = self.character
 

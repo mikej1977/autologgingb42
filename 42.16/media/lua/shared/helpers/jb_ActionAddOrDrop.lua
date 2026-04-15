@@ -1,10 +1,7 @@
 -- jb_ActionAddOrDrop.lua
 local OG_addOrDropShit = Actions.addOrDropItem
 local ItemList = require("registries/jb_ItemList")
-function Actions.addOrDropItem(character, item)
-    
--- should pull in from dropItem registry    
-
+function Actions.addOrDropItem(character, item)    
     if not ItemList.DropItems[item:getFullType()] then
         OG_addOrDropShit(character, item)
         return

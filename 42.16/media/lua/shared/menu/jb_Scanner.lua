@@ -12,7 +12,7 @@ local Scanner = {
 }
 
 --- Registers a scanner function to detect specific shit
---- @param cat string 'Square', 'Object', 'WorldObject', 'Recipe' or 'Environment'
+--- @param cat string 'Square', 'Object', 'WorldObject', 'Recipe' or 'Environment' - 'Storage' maybe
 --- @param id string unique ID for this scanner in case you don't like mine
 --- @param func function "function(data, playerObj, clickedFlags)"
 function Scanner.registerScanner(cat, id, func)
@@ -40,7 +40,6 @@ Scanner.registerScanner("ToolCheck", "jb_globalToolCheck", function(playerObj, _
     flags.toolBreakBoulder = inv:containsEvalRecurse(p.Digging)
 end)
 
--- we got tree?
 Scanner.registerScanner("Square", "jb_hasTree", function(square, player, flags)
     if flags.hasTree then return end
     if square:HasTree() then
@@ -48,7 +47,6 @@ Scanner.registerScanner("Square", "jb_hasTree", function(square, player, flags)
     end
 end)
 
--- we got logs?
 Scanner.registerScanner("WorldObject", "jb_hasLog", function(wobj, player, flags)
     if flags.hasLog then return end
     if ItemList.GatherItemList.Logs[wobj:getItem():getFullType()] then
@@ -137,13 +135,14 @@ end)
 
 Scanner.registerScanner("Object", "jb_hasAutoStorage", function(obj, player, flags)
     if flags.hasAutoStorage then return end
-    if obj:getSquare() ~= flags.clickedSquare then return end
+    -- if obj:getSquare() ~= flags.clickedSquare then return end
 
-    if obj:getModData() and obj:getModData().JB_AutoLogStorage then
+    --[[ if obj:getModData() and obj:getModData().JB_AutoLogStorage then
         flags.squareAutoStorage = obj:getSquare()
         flags.objAutoStorage = obj
         flags.hasAutoStorage = true
-    end
+    end ]]
+    flags.hasAutoStorage = true
 end)
 
 Scanner.registerScanner("Object", "jb_hasTwig2", function(obj, player, flags)
