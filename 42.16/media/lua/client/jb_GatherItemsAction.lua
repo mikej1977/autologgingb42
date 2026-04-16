@@ -290,6 +290,10 @@ function JB_GatherItemsAction:PickupItems()
     }
 
     walk:setOnComplete(function(data)
+        if not data.itemObj or not data.itemObj:getSquare() then
+            return -- someone beat you to it!
+        end
+
         if data.tileFlag then
             ISTimedActionQueue.add(JB_GatherSpriteAction:new(data.char, data.itemObj, data.itemFullType, data.dest))
         else

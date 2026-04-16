@@ -1,11 +1,19 @@
 -- jb_ActionPlayer.lua
 local ActionSpeedKeeper = require("helpers/jb_SpeedKeeper")
+local ClaimedSquares = require("helpers/jb_ClaimedSquares")
 
 local ActionPlayer = {}
 local queues = {}
 
 function ActionPlayer.addToQueue(playerObj, func, args)
     local pNum = playerObj:getPlayerNum()
+
+    local targetSquare = args and args[2]
+    if targetSquare and instanceof(targetSquare, "IsoGridSquare") then
+        if not ClaimedSquares.claim(targetSquare, pNum) then
+            return
+        end
+    end
 
     if not queues[pNum] then
         queues[pNum] = {
@@ -16,7 +24,7 @@ function ActionPlayer.addToQueue(playerObj, func, args)
         }
     end
 
-    table.insert(queues[pNum].tasks, { func = func, args = args })
+    table.insert(queues[pNum].tasks, { func = func, args = args, square = targetSquare })
 
     if not queues[pNum].isActive then
         ActionPlayer.start(playerObj)
@@ -52,6 +60,11 @@ function ActionPlayer.start(playerObj)
         end
 
         local task = table.remove(q.tasks, 1)
+
+        if task.square then
+            ClaimedSquares.release(task.square)
+        end
+
         if task and task.func then
             task.func(unpack(task.args))
         end
@@ -65,6 +78,8 @@ function ActionPlayer.clear(playerObj)
     local q = queues[pNum]
 
     if q then
+        ClaimedSquares.releaseAll(pNum)
+
         q.isActive = false
         q.tasks = {}
         if q.speedKeeper then

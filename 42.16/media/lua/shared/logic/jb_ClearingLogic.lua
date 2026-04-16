@@ -78,15 +78,16 @@ ClearingLogic.ClearRegistry = {
                     stumpObj = o; break
                 end
             end
+            if not stumpObj then return end
 
-            if stumpObj then
-                ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), Predicates.DigStump, true, true)
-                ActionPlayer.addToQueue(playerObj, function(p, s)
-                    if luautils.walkAdj(p, s:getSquare()) then
-                        ISTimedActionQueue.add(ISPickAxeGroundCoverItem:new(p, s))
-                    end
-                end, { playerObj, stumpObj })
-            end
+            ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), Predicates.DigStump, true, true)
+
+            ActionPlayer.addToQueue(playerObj, function(p, s)
+                if not s or not s:getSquare() then return end
+                if luautils.walkAdj(p, s:getSquare()) then
+                    ISTimedActionQueue.add(ISPickAxeGroundCoverItem:new(p, s))
+                end
+            end, { playerObj, stumpObj })
         end
     },
     Boulder = {
@@ -105,18 +106,18 @@ ClearingLogic.ClearRegistry = {
                     boulderObj = o; break
                 end
             end
+            if not boulderObj or not config then return end
 
-            if boulderObj and config then
-                if config.tool then
-                    ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), Predicates.Digging, true,
-                        true)
-                end
-                ActionPlayer.addToQueue(playerObj, function(p, b, cfg)
-                    if luautils.walkAdj(p, b:getSquare()) then
-                        ISTimedActionQueue.add(JB_ClearBoulderAction:new(p, b, cfg.tool, cfg.stones))
-                    end
-                end, { playerObj, boulderObj, config })
+            if config.tool then
+                ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), Predicates.Digging, true, true)
             end
+
+            ActionPlayer.addToQueue(playerObj, function(p, b, cfg)
+                if not b or not b:getSquare() then return end
+                if luautils.walkAdj(p, b:getSquare()) then
+                    ISTimedActionQueue.add(JB_ClearBoulderAction:new(p, b, cfg.tool, cfg.stones))
+                end
+            end, { playerObj, boulderObj, config })
         end
     }
 }
