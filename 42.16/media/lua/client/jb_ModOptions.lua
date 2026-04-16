@@ -15,7 +15,6 @@ local function JBLoggingOptions()
     options:addDescription(getText("UI_JBLogging_ModOptions_Desc3"))
     options:addSeparator()
 
-    -- We drop the 'config.checkBox =' so we aren't constantly overwriting a single variable
     -- options:addTickBox("Use_Sidebar_Menu", getText("UI_JBLogging_ModOptions_UseSideBarMenu"), false)
     options:addTickBox("Use_Radial_Menu", getText("UI_JBLogging_ModOptions_UseRadialMenu"), false)
     options:addTickBox("Collapse_Context_Menu", getText("UI_JBLogging_ModOptions_Collapse_Context_Menu"), false)
