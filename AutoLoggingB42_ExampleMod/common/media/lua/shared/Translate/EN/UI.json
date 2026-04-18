@@ -1,0 +1,8 @@
+{
+    
+    "UI_MyMod_Category_Farming": "Farming",
+    "UI_MyMod_Menu_Gather_hasDung": "Gather Dung in Pile",
+    "UI_MyMod_Menu_Tooltip_Gather_hasDung": "Automatically gathers cow, pig and turkey dung in the selected area and deposits it in a pile.",
+    "UI_MyMod_Category_Gathering": "Pick Up Poops"
+
+}
